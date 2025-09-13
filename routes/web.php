@@ -1,27 +1,25 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\GoogleController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Home (public)
+Route::view('/', 'home')->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ✅ OAuth Google (PUBLIC)
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])
+    ->name('oauth.google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
+    ->name('oauth.google.callback');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Dashboard và các trang khác (có auth), sau cần chỉnh thì thêm "verified"
+Route::middleware(['auth'])->group(function () { 
+    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    Route::view('/decks', 'stubs.decks')->name('decks.index');
+    Route::view('/items', 'stubs.items')->name('items.index');
+    Route::view('/analytics', 'stubs.analytics')->name('analytics.index');
+    Route::view('/study', 'stubs.study')->name('study.queue');
+    Route::view('/settings', 'stubs.settings')->name('settings');
 });
 
 require __DIR__.'/auth.php';
-use App\Http\Controllers\Auth\GoogleController;
-
-Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])
-    ->name('oauth.google.redirect');
-
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
-    ->name('oauth.google.callback');

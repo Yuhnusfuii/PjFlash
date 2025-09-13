@@ -1,17 +1,21 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+{{-- resources/views/dashboard.blade.php --}}
+@push('styles')
+<style>
+  /* CSS riêng cho trang này (tuỳ chọn) */
+  .hero { background: radial-gradient(1200px 600px at 10% 0%, #e0f2fe 0, transparent 60%); }
+</style>
+@endpush
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+<x-app-layout>
+  <div class="container-app py-6 view-fade">
+    <div class="card p-6">
+      You're logged in!
     </div>
+  </div>
 </x-app-layout>
+
+@push('scripts')
+<script>
+  // JS riêng cho Dashboard (nếu cần)
+</script>
+@endpush
