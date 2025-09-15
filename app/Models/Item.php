@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
-use App\Enums\ItemType; // 👈 thêm dòng này
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use App\Enums\ItemType;
 
 class Item extends Model
 {
-    protected $fillable = ['deck_id','type','front','back','data','hint','position'];
+    use HasFactory;
+
+    protected $fillable = ['deck_id','type','front','back','data'];
 
     protected $casts = [
-        'type' => ItemType::class, // 👈 cast sang backed enum
         'data' => 'array',
+        'type' => ItemType::class, // enum: flashcard|mcq|matching
     ];
 
-    // ...
+    public function deck(){ return $this->belongsTo(Deck::class); }
+    public function reviewStates(){ return $this->hasMany(ReviewState::class); }
 }
