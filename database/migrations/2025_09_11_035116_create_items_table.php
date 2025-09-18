@@ -7,23 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::create('items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('deck_id')->constrained()->cascadeOnDelete();
+    $table->id();
+    $table->foreignId('deck_id')->constrained()->cascadeOnDelete();
+    $table->string('type', 20);     // flashcard | mcq | matching
+    $table->text('front')->nullable();   // ✅ nullable
+    $table->text('back')->nullable();    // ✅ nullable
+    $table->json('data')->nullable();    // ✅ nullable
+    $table->timestamps();
+});
 
-            // 'flashcard' | 'mcq' | 'matching'
-            $table->enum('type', ['flashcard','mcq','matching']);
-
-            // Nội dung chính (cho flashcard/mcq/matching đều dùng):
-            $table->string('front', 512);
-            $table->text('back')->nullable(); // nghĩa/đáp án/giải thích
-            $table->json('data')->nullable(); // choices (MCQ), pairs (matching), hints...
-
-            $table->string('hint', 255)->nullable();
-            $table->unsignedInteger('position')->default(0); // để sort trong deck
-            $table->timestamps();
-
-            $table->index(['deck_id','type']);
-        });
     }
     public function down(): void {
         Schema::dropIfExists('items');

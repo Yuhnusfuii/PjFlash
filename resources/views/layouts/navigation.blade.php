@@ -38,6 +38,13 @@
         data-mobile-toggle
         class="md:hidden inline-flex items-center justify-center px-3 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800"
         aria-expanded="false" aria-label="Open Menu">☰</button>
+      <form method="POST" action="{{ route('logout') }}" class="ml-3 hidden md:block">
+      @csrf
+      <button type="submit" class="btn-outline text-sm">
+        Đăng xuất
+      </button>
+       </form>
+
     </div>
   </div>
 </nav>
@@ -55,4 +62,13 @@
       <a href="{{ route('login') }}" class="block px-3 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">Đăng nhập</a>
     @endauth
   </div>
+  <div class="px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+  <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="w-full btn-outline">
+      Đăng xuất
+    </button>
+  </form>
+</div>
+
 </div>

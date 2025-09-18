@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo};
 
-class ReviewState extends Model
+class Review extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'user_id','item_id','ease','interval','repetitions','due_at','last_reviewed_at',
+        'user_id','item_id','rating','interval_days','ease_factor','reviewed_at','next_due_at','duration_ms','meta'
     ];
-
+    protected $guarded = [];
     protected $casts = [
-        'ease' => 'float',
-        'interval' => 'integer',
-        'repetitions' => 'integer',
-        'due_at' => 'datetime',
-        'last_reviewed_at' => 'datetime',
+        'rating' => 'integer',
+        'interval_days' => 'integer',
+        'ease_factor' => 'float',
+        'reviewed_at' => 'datetime',
+        'next_due_at' => 'datetime',
+        'meta' => 'array',
     ];
 
-    public function item(){ return $this->belongsTo(Item::class); }
-    public function user(){ return $this->belongsTo(User::class); }
+    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function item(): BelongsTo { return $this->belongsTo(Item::class); }
 }

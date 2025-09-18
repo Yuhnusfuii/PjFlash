@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
 {
     Schema::table('items', function (Blueprint $table) {
-        if (!Schema::hasColumn('items','front')) $table->text('front')->nullable()->after('type');
-        if (!Schema::hasColumn('items','back'))  $table->text('back')->nullable()->after('front');
-        if (!Schema::hasColumn('items','data'))  $table->json('data')->nullable()->after('back');
-    });
+    if (!Schema::hasColumn('items','front')) $table->text('front')->nullable()->after('type');
+    if (!Schema::hasColumn('items','back'))  $table->text('back')->nullable()->after('front');
+    if (!Schema::hasColumn('items','data'))  $table->json('data')->nullable()->after('back');
+});
+
 }
 
 public function down(): void

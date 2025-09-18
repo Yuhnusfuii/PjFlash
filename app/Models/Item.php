@@ -11,7 +11,7 @@ class Item extends Model
     use HasFactory;
 
     protected $fillable = ['deck_id','type','front','back','data'];
-
+    protected $guarded = [];
     protected $casts = [
         'data' => 'array',
         'type' => ItemType::class, // enum: flashcard|mcq|matching
