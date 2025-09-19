@@ -3,44 +3,69 @@
 namespace App\Services;
 
 use App\Models\{Deck, Item};
+use App\Services\Contracts\McqGeneratorServiceInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
-class McqGeneratorService
+class McqGeneratorService implements McqGeneratorServiceInterface
 {
-    public function generateFromDeck(Deck $deck, int $choices = 4): ?array
+    public function generate(Item $item, ?Deck $context = null, int $numOptions = 4): array
     {
-        $ids = Deck::where('id',$deck->id)->orWhere('parent_id',$deck->id)->pluck('id');
+        // Câu hỏi & đáp án đúng (flashcard: front/back)
+        $question = (string) ($item->front ?? '');
+        $correct  = (string) ($item->back ?? '');
 
-        $pool = Item::whereIn('deck_id',$ids)
-            ->where('type','flashcard')
-            ->whereNotNull('front')->whereNotNull('back')
-            ->inRandomOrder()->get();
+        // 1) Lấy pool distractor trong cùng deck (ưu tiên)
+        $deckId = $context?->id ?? $item->deck_id;
 
-        if ($pool->count() < 2) return null;
+        $pool = Item::query()
+            ->where('type', 'flashcard')
+            ->where('deck_id', $deckId)
+            ->where('id', '!=', $item->id)
+            ->pluck('back')
+            ->filter()
+            ->map(fn ($v) => (string) $v)
+            ->unique()
+            ->values();
 
-        $core    = $pool->random();
-        $correct = trim((string) $core->back);
-
-        $distractors = $pool->where('id','!=',$core->id)->pluck('back')
-            ->map(fn($v)=>trim((string)$v))->unique()->values();
-
-        if ($distractors->count() < ($choices-1)) {
-            $global = Item::where('type','flashcard')->where('id','!=',$core->id)
-                ->inRandomOrder()->limit(($choices-1)-$distractors->count())
-                ->pluck('back')->map(fn($v)=>trim((string)$v));
-            $distractors = $distractors->merge($global)->unique()->values();
+        // 2) Fallback global nếu chưa đủ
+        if ($pool->count() < $numOptions - 1) {
+            $more = Item::query()
+                ->where('type', 'flashcard')
+                ->where('id', '!=', $item->id)
+                ->pluck('back')
+                ->filter()
+                ->map(fn ($v) => (string) $v)
+                ->unique()
+                ->values();
+            $pool = $pool->merge($more)->unique()->values();
         }
 
-        $options = $distractors->take($choices-1)->toArray();
+        // 3) Loại trùng với đáp án đúng & chọn đủ số lượng
+        $pool = $pool->reject(fn ($opt) => $opt === $correct)->values();
+
+        /** @var Collection $distractors */
+        $distractors = $pool->shuffle()->take(max(0, $numOptions - 1));
+
+        // 4) Gộp + xáo trộn, xác định answer index
+        $options = $distractors->toArray();
         $options[] = $correct;
-        $options = Arr::shuffle($options);
+        $options = Arr::shuffle(array_values(array_unique($options)));
+
+        $answerIndex = array_search($correct, $options, true);
+        if ($answerIndex === false) {
+            // Trường hợp hiếm khi $correct rỗng → đặt tạm index 0
+            $answerIndex = 0;
+        }
 
         return [
-            'question'=>(string)$core->front,
-            'choices'=>$options,
-            'correct_index'=>array_search($correct,$options,true),
-            'explanation'=>null,
-            'source_item_id'=>$core->id,
+            'question' => $question !== '' ? $question : 'Question',
+            'options'  => $options,
+            'answer'   => $answerIndex,
+            'meta'     => [
+                'deck_id' => $deckId,
+                'target_item_id' => $item->id,
+            ],
         ];
     }
 }

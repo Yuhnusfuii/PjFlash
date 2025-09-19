@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\ServiceProvider;
 
 return [
 
@@ -122,9 +123,14 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-    'providers' => [
-    // ...
+    'providers' => ServiceProvider::defaultProviders()->merge([
+    App\Providers\AppServiceProvider::class,
+
+
+    // provider riêng của bạn
     App\Providers\DomainServiceProvider::class,
-    ],
+    App\Providers\ServicesServiceProvider::class,
+])->toArray(),
+
 
 ];

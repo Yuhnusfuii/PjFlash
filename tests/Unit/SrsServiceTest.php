@@ -2,14 +2,16 @@
 
 use App\Enums\ReviewRating;
 use App\Models\{User, Deck, Item};
-use App\Services\SrsService;
+use App\Services\Contracts\SrsServiceInterface;
+
 
 it('updates EF & interval with SM-2', function () {
     $user = User::factory()->create();
     $deck = Deck::factory()->create(['user_id'=>$user->id]);
     $item = Item::create(['deck_id'=>$deck->id,'type'=>'flashcard','front'=>'A','back'=>'a']);
 
-    $srs  = app(SrsService::class);
+    $srs = app(SrsServiceInterface::class);
+
     $st   = $srs->review($user, $item, ReviewRating::GOOD);
 
     expect($st->interval)->toBeGreaterThan(0)
