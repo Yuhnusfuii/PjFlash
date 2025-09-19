@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\{
+    DeckController, ItemController, StudyController, GeneratorController
+};
 // Home (public)
 Route::view('/', 'home')->name('home');
 
@@ -14,7 +17,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
     ->name('oauth.google.callback');
 
 // Dashboard và các trang khác (có auth), sau cần chỉnh thì thêm "verified"
-Route::middleware(['auth'])->group(function () { 
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
     Route::view('/decks', 'stubs.decks')->name('decks.index');
     Route::view('/items', 'stubs.items')->name('items.index');
@@ -31,3 +34,26 @@ Route::post('/logout', function (Request $request) {
     $request->session()->regenerateToken();
     return redirect()->route('login'); // hoặc '/'
 })->name('logout');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    // Decks
+    Route::apiResource('decks', DeckController::class);
+
+    // Items
+    Route::apiResource('items', ItemController::class);
+    Route::post('items/import', [ItemController::class, 'import'])
+        ->middleware('throttle:import');
+
+    // Study
+    Route::get('study/queue', [StudyController::class, 'queue'])
+        ->middleware('throttle:review');
+    Route::post('study/{item}/review', [StudyController::class, 'review'])
+        ->middleware('throttle:review');
+
+    // Generators
+    Route::get('generate/mcq/{item}', [GeneratorController::class, 'mcq'])
+        ->middleware('throttle:review');
+    Route::get('generate/matching/{item}', [GeneratorController::class, 'matching'])
+        ->middleware('throttle:review');
+});
