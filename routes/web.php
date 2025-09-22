@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{
     DeckController, ItemController, StudyController, GeneratorController
 };
+use App\Livewire\Decks\DeckIndex;
+use App\Livewire\Decks\DeckShow;
 // Home (public)
 Route::view('/', 'home')->name('home');
 
@@ -56,4 +58,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('throttle:review');
     Route::get('generate/matching/{item}', [GeneratorController::class, 'matching'])
         ->middleware('throttle:review');
-});
+    });
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/decks', DeckIndex::class)->name('decks.index');
+        Route::get('/decks/{deck}', DeckShow::class)->name('decks.show');
+    });
