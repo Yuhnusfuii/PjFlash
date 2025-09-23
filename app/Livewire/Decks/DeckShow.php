@@ -3,7 +3,9 @@
 namespace App\Livewire\Decks;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Deck;
 use App\Models\Item;
@@ -11,90 +13,125 @@ use App\Models\Item;
 #[Layout('layouts.app')]
 class DeckShow extends Component
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, WithPagination;
 
     public Deck $deck;
 
-    // Create inputs
-    public string $front = '';
-    public string $back  = '';
+    // Search / sort / pagination (giữ từ bước 2)
+    #[Url(as: 'q')]    public string $q = '';
+    #[Url(as: 'sort')] public string $sort = 'latest';   // latest|oldest|front_az|front_za
+    #[Url(as: 'pp')]   public int $perPage = 10;
 
-    // Edit inline state
-    public ?int $editingId = null;
+    // STATE cho modal Create
+    public bool $showCreate = false;
+    public string $createFront = '';
+    public string $createBack  = '';
+
+    // STATE cho modal Edit
+    public bool $showEdit = false;
+    public ?int $editId = null;
     public string $editFront = '';
     public string $editBack  = '';
 
-    /**
-     * Mount: ensure user can view this deck and preload items.
-     */
+    protected $queryString = [];
+
     public function mount(Deck $deck): void
     {
         $this->authorize('view', $deck);
-        $this->deck = $deck->load(['items' => fn ($q) => $q->latest()]);
+        $this->deck = $deck;
     }
 
-    /**
-     * Create new flashcard item.
-     */
-    public function addItem(): void
+    /* ========== Datasource ========== */
+    public function getItemsProperty()
+    {
+        $q = Item::query()->where('deck_id', $this->deck->id);
+
+        if ($this->q !== '') {
+            $term = '%' . $this->q . '%';
+            $q->where(function ($qq) use ($term) {
+                $qq->where('front', 'like', $term)
+                   ->orWhere('back', 'like', $term)
+                   ->orWhere('type', 'like', $term);
+            });
+        }
+
+        $q = match ($this->sort) {
+            'oldest'   => $q->orderBy('id', 'asc'),
+            'front_az' => $q->orderBy('front', 'asc'),
+            'front_za' => $q->orderBy('front', 'desc'),
+            default    => $q->orderBy('id', 'desc'),
+        };
+
+        $pp = in_array($this->perPage, [5,10,15,20,30,50], true) ? $this->perPage : 10;
+
+        return $q->paginate($pp)->withQueryString();
+    }
+
+    /* ========== Open/Close modals ========== */
+    public function openCreate(): void
     {
         $this->authorize('create', Item::class);
-
-        $this->validate([
-            'front' => ['required', 'string', 'max:500'],
-            'back'  => ['required', 'string', 'max:2000'],
-        ]);
-
-        $this->deck->items()->create([
-            'type'  => 'flashcard',
-            'front' => trim($this->front),
-            'back'  => trim($this->back),
-            'data'  => null,
-        ]);
-
-        $this->front = $this->back = '';
-        $this->refreshDeck();
-        session()->flash('ok', 'Item added!');
+        $this->resetValidation();
+        $this->createFront = $this->createBack = '';
+        $this->showCreate = true;
     }
 
-    /**
-     * Start editing an item (load into edit form).
-     */
-    public function startEditItem(int $itemId): void
+    public function openEdit(int $itemId): void
     {
         $item = Item::where('deck_id', $this->deck->id)->findOrFail($itemId);
         $this->authorize('update', $item);
 
-        $this->editingId = $item->id;
+        $this->resetValidation();
+        $this->editId    = $item->id;
         $this->editFront = $item->front ?? '';
         $this->editBack  = $item->back ?? '';
+        $this->showEdit  = true;
     }
 
-    /**
-     * Cancel edit state.
-     */
-    public function cancelEditItem(): void
+    public function closeCreate(): void
     {
-        $this->editingId = null;
-        $this->editFront = '';
-        $this->editBack  = '';
+        $this->showCreate = false;
     }
 
-    /**
-     * Persist edits for the current item.
-     */
-    public function saveEditItem(): void
+    public function closeEdit(): void
     {
-        if (!$this->editingId) {
-            return;
-        }
+        $this->showEdit = false;
+        $this->editId = null;
+        $this->editFront = $this->editBack = '';
+    }
+
+    /* ========== CRUD ========== */
+    public function storeItem(): void
+    {
+        $this->authorize('create', Item::class);
+
+        $this->validate([
+            'createFront' => ['required', 'string', 'max:500'],
+            'createBack'  => ['required', 'string', 'max:2000'],
+        ]);
+
+        $this->deck->items()->create([
+            'type'  => 'flashcard',
+            'front' => trim($this->createFront),
+            'back'  => trim($this->createBack),
+            'data'  => null,
+        ]);
+
+        $this->closeCreate();
+        $this->resetPage(); // quay về trang 1 để thấy item mới
+        session()->flash('ok', 'Item created!');
+    }
+
+    public function updateItem(): void
+    {
+        if (!$this->editId) return;
 
         $this->validate([
             'editFront' => ['required', 'string', 'max:500'],
             'editBack'  => ['required', 'string', 'max:2000'],
         ]);
 
-        $item = Item::where('deck_id', $this->deck->id)->findOrFail($this->editingId);
+        $item = Item::where('deck_id', $this->deck->id)->findOrFail($this->editId);
         $this->authorize('update', $item);
 
         $item->update([
@@ -102,14 +139,10 @@ class DeckShow extends Component
             'back'  => trim($this->editBack),
         ]);
 
-        $this->cancelEditItem();
-        $this->refreshDeck();
+        $this->closeEdit();
         session()->flash('ok', 'Item updated!');
     }
 
-    /**
-     * Delete an item.
-     */
     public function deleteItem(int $itemId): void
     {
         $item = Item::where('deck_id', $this->deck->id)->findOrFail($itemId);
@@ -117,24 +150,37 @@ class DeckShow extends Component
 
         $item->delete();
 
-        // nếu đang edit đúng item này thì thoát chế độ edit
-        if ($this->editingId === $itemId) {
-            $this->cancelEditItem();
+        // Nếu xóa hết ở trang hiện tại, lùi 1 trang
+        if ($this->items->count() === 0 && $this->page > 1) {
+            $this->previousPage();
         }
 
-        $this->refreshDeck();
+        // Nếu đang edit đúng item, đóng modal
+        if ($this->editId === $itemId) {
+            $this->closeEdit();
+        }
+
         session()->flash('ok', 'Item deleted!');
     }
 
-    protected function refreshDeck(): void
-    {
-        $this->deck->refresh()->load(['items' => fn ($q) => $q->latest()]);
-    }
+    /* ========== UI handlers ========== */
+    public function updatedQ(): void      { $this->resetPage(); }
+    public function updatedSort(): void   { $this->resetPage(); }
+    public function updatedPerPage(): void{ $this->resetPage(); }
 
     public function render()
     {
-        // Không cần trả view cụ thể nếu bạn đã dùng Layout attribute và file view đúng tên:
-        // resources/views/livewire/decks/deck-show.blade.php
-        return view('livewire.decks.deck-show', ['deck' => $this->deck]);
+        return view('livewire.decks.deck-show', [
+            'items' => $this->items,
+        ]);
     }
+    public function getDueCountProperty(): int
+{
+    return \App\Models\Item::where('deck_id', $this->deck->id)
+        ->where(function ($q) {
+            $q->whereNull('due_at')->orWhere('due_at', '<=', now());
+        })
+        ->count();
+}
+
 }

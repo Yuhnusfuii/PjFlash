@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Deck;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use App\Http\Requests\{StoreDeckRequest, UpdateDeckRequest};
 class DeckController extends Controller
 {
     public function index(Request $request)
@@ -19,17 +19,15 @@ class DeckController extends Controller
         return response()->json($decks);
     }
 
-    public function store(Request $request)
+   public function store(StoreDeckRequest $request)
     {
-        $data = $request->validate([
-            'name'        => ['required','string','max:255'],
-            'description' => ['nullable','string','max:1000'],
-            'parent_id'   => ['nullable','integer','exists:decks,id'],
-        ]);
+    $data = $request->validated();
 
-        $deck = Deck::create($data + ['user_id' => $request->user()->id]);
+    $deck = \App\Models\Deck::create($data + [
+        'user_id' => $request->user()->id,
+    ]);
 
-        return response()->json($deck, Response::HTTP_CREATED);
+    return response()->json($deck, \Illuminate\Http\Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Deck $deck)
@@ -40,19 +38,13 @@ class DeckController extends Controller
         return response()->json($deck);
     }
 
-    public function update(Request $request, Deck $deck)
+    public function update(UpdateDeckRequest $request, \App\Models\Deck $deck)
     {
-        $this->authorize('update', $deck);
+    $this->authorize('update', $deck);
 
-        $data = $request->validate([
-            'name'        => ['sometimes','string','max:255'],
-            'description' => ['nullable','string','max:1000'],
-            'parent_id'   => ['nullable','integer','exists:decks,id'],
-        ]);
+    $deck->update($request->validated());
 
-        $deck->update($data);
-
-        return response()->json($deck);
+    return response()->json($deck);
     }
 
     public function destroy(Request $request, Deck $deck)

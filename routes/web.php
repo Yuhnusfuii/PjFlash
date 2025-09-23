@@ -5,10 +5,15 @@ use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{
-    DeckController, ItemController, StudyController, GeneratorController
+DeckController, ItemController, StudyController, GeneratorController
 };
 use App\Livewire\Decks\DeckIndex;
 use App\Livewire\Decks\DeckShow;
+use App\Livewire\Study\StudyPanel;
+use App\Livewire\Analytics\DeckAnalytics;
+use App\Livewire\Analytics\DecksOverview;
+
+
 // Home (public)
 Route::view('/', 'home')->name('home');
 
@@ -62,4 +67,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/decks', DeckIndex::class)->name('decks.index');
         Route::get('/decks/{deck}', DeckShow::class)->name('decks.show');
+    });
+    Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/decks/{deck}/study', StudyPanel::class)->name('study.panel');
+    });
+    Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/decks/{deck}/analytics', DeckAnalytics::class)->name('decks.analytics');
+    });
+
+    Route::middleware(['auth','verified'])->group(function () {
+        Route::get('/analytics/decks', DecksOverview::class)->name('analytics.decks');
     });

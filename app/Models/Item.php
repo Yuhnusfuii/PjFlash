@@ -10,7 +10,8 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['deck_id','type','front','back','data'];
+    protected $fillable = ['deck_id','type','front','back','data', 'ef', 'interval', 'repetition', 'due_at',
+    'review_count', 'last_reviewed_at',];
     protected $guarded = [];
     protected $casts = [
         'data' => 'array',

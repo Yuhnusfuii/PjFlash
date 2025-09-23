@@ -8,6 +8,8 @@ use App\Services\Contracts\SrsServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use App\Http\Requests\ReviewRequest;
+
 
 class StudyController extends Controller
 {
@@ -45,26 +47,32 @@ class StudyController extends Controller
     }
 
     // POST /api/study/{item}/review
-    public function review(Request $request, Item $item, SrsServiceInterface $srs)
-    {
-        $data = $request->validate([
-            'rating'      => ['required','string'], // 'again'|'hard'|'good'|'easy' (enum bước 7)
-            'duration_ms' => ['nullable','integer','min:0'],
-            'meta'        => ['nullable','array'],
-        ]);
+    public function review(
+    ReviewRequest $request,
+    \App\Models\Item $item
+) {
+    $data   = $request->validated();
+    // KHÔNG đổi hoa/thường: enum của bạn là chuỗi 'again|hard|good|easy'
+    $rating = \App\Enums\ReviewRating::from($data['rating']);
+    $duration = (int)($data['duration_ms'] ?? 0);
+    $meta   = $data['meta'] ?? [];
 
-        // Convert string -> enum (tuỳ enum của bạn)
-        $rating = ReviewRating::from(strtoupper($data['rating']));
-        $duration = (int) ($data['duration_ms'] ?? 0);
-        $meta = $data['meta'] ?? [];
+    // Lấy SRS service an toàn: ưu tiên interface, fallback concrete
+    $srs = app()->bound(\App\Services\Contracts\SrsServiceInterface::class)
+        ? app(\App\Services\Contracts\SrsServiceInterface::class)
+        : app(\App\Services\SrsService::class);
 
-        $state = $srs->review($request->user(), $item, $rating, $duration, $meta);
+    $state = $srs->review($request->user(), $item, $rating, $duration, $meta);
 
-        return response()->json([
-            'item_id'  => $item->id,
-            'interval' => $state->interval,
-            'ease'     => $state->ease,
-            'due_at'   => $state->due_at,
-        ], Response::HTTP_OK);
-    }
+    return response()->json([
+        'ok'    => true,
+        'state' => [
+            'ease_factor'   => $state->ease_factor ?? null,
+            'interval_days' => $state->interval_days ?? null,
+            'repetitions'   => $state->repetitions ?? null,
+            'due_at'        => $state->due_at ?? null,
+        ],
+    ]);
+}
+
 }

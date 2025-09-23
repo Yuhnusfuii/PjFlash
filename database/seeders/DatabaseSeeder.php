@@ -20,5 +20,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
         $this->call(DemoSeeder::class);
+        $this->call([
+            DemoSrsSeeder::class, // ✅ thêm dòng này
+        ]);
     }
 }

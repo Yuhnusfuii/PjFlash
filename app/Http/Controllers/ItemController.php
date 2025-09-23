@@ -6,6 +6,8 @@ use App\Models\{Deck, Item};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\{StoreItemRequest, UpdateItemRequest, ImportCsvRequest};
+
 
 class ItemController extends Controller
 {
@@ -22,23 +24,17 @@ class ItemController extends Controller
         return response()->json($query->paginate(20));
     }
 
-    public function store(Request $request)
+    public function store(StoreItemRequest $request)
     {
-        $data = $request->validate([
-            'deck_id' => ['required','integer','exists:decks,id'],
-            'type'    => ['required', Rule::in(['flashcard','mcq','matching'])], // nếu bạn dùng Enum thì đổi cho khớp
-            'front'   => ['nullable','string'],
-            'back'    => ['nullable','string'],
-            'data'    => ['nullable','array'],
-        ]);
+    $data = $request->validated();
 
-        // quyền theo Deck (bước 8 thêm Policy)
-        $deck = Deck::findOrFail($data['deck_id']);
-        $this->authorize('update', $deck);
+    // Bảo đảm chỉ owner của deck được thêm item
+    $deck = \App\Models\Deck::findOrFail($data['deck_id']);
+    $this->authorize('update', $deck);
 
-        $item = Item::create($data);
+    $item = \App\Models\Item::create($data);
 
-        return response()->json($item, Response::HTTP_CREATED);
+    return response()->json($item, \Illuminate\Http\Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Item $item)
@@ -47,20 +43,14 @@ class ItemController extends Controller
         return response()->json($item);
     }
 
-    public function update(Request $request, Item $item)
+    public function update(UpdateItemRequest $request, \App\Models\Item $item)
     {
-        $this->authorize('update', $item);
+    // Chỉ owner của deck chứa item được sửa
+    $this->authorize('update', $item->deck);
 
-        $data = $request->validate([
-            'type'  => ['sometimes', Rule::in(['flashcard','mcq','matching'])],
-            'front' => ['nullable','string'],
-            'back'  => ['nullable','string'],
-            'data'  => ['nullable','array'],
-        ]);
+    $item->update($request->validated());
 
-        $item->update($data);
-
-        return response()->json($item);
+    return response()->json($item);
     }
 
     public function destroy(Request $request, Item $item)
@@ -73,13 +63,9 @@ class ItemController extends Controller
     }
 
     // Placeholder Import CSV (Bước 11 sẽ làm thật)
-    public function import(Request $request)
+    public function import(ImportCsvRequest $request)
     {
-        $request->validate([
-            'file' => ['required','file','mimes:csv,txt'],
-        ]);
-
-        // TODO: parse preview/commit ở Bước 11
-        return response()->json(['status' => 'accepted'], Response::HTTP_ACCEPTED);
+    // Ở bước 11 mới xử lý parser + preview/commit
+    return response()->json(['status' => 'accepted'], \Illuminate\Http\Response::HTTP_ACCEPTED);
     }
 }
