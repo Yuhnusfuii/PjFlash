@@ -1,169 +1,130 @@
-<div class="max-w-5xl p-6 mx-auto space-y-6">
+<div class="max-w-6xl mx-auto p-6 space-y-6"
+     x-data="{
+        showItemModal: @entangle('showItemModal').live,
+        showDeckModal: @entangle('showDeckModal').live
+     }"
+     @keydown.escape.window="
+        if (showItemModal) showItemModal = false;
+        if (showDeckModal) showDeckModal = false;
+     ">
+
+    {{-- Flash message --}}
+    @if (session('success'))
+        <div class="p-3 rounded bg-green-100 text-green-800">
+            {{ session('success') }}
+        </div>
+    @endif
 
     {{-- Header --}}
-    <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold">{{ $deck->name }}</h1>
-
-    <div class="flex items-center gap-2">
-    <span class="text-sm text-gray-500">Due: {{ $this->dueCount }}</span>
-
-    <a href="{{ route('study.panel', $deck) }}"
-       class="px-3 py-2 text-sm text-white bg-black rounded hover:opacity-90">Study</a>
-
-    <a href="{{ route('decks.analytics', $deck) }}"
-       class="px-3 py-2 text-sm border rounded hover:bg-gray-50">Analytics</a>
-
-    <a href="{{ route('decks.index') }}" class="text-sm underline">← Back</a>
-    </div>
-
-    </div>
-
-
-    {{-- Flash --}}
-    @if (session('ok'))
-        <div class="p-3 text-sm text-green-800 bg-green-100 rounded">{{ session('ok') }}</div>
-    @endif
-
-    {{-- Toolbar --}}
-    <div class="grid gap-3 p-4 border rounded md:grid-cols-3">
+    <div class="flex items-start justify-between gap-4">
         <div>
-            <div class="mb-1 text-xs text-gray-500">Search</div>
-            <input
-                type="text"
-                placeholder="Find in front/back/type…"
-                wire:model.live.debounce.300ms="q"
-                class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
-            >
+            <h1 class="text-2xl font-semibold">{{ $deck->name }}</h1>
+            @if(!empty($deck->description))
+                <p class="text-sm text-gray-600 mt-1">{{ $deck->description }}</p>
+            @endif
         </div>
-        <div>
-            <div class="mb-1 text-xs text-gray-500">Sort by</div>
-            <select wire:model.live="sort" class="w-full px-3 py-2 border rounded">
-                <option value="latest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-                <option value="front_az">Front A → Z</option>
-                <option value="front_za">Front Z → A</option>
-            </select>
-        </div>
-        <div>
-            <div class="mb-1 text-xs text-gray-500">Per page</div>
-            <select wire:model.live="perPage" class="w-full px-3 py-2 border rounded">
-                <option>5</option>
-                <option selected>10</option>
-                <option>15</option>
-                <option>20</option>
-                <option>30</option>
-                <option>50</option>
-            </select>
+
+        {{-- Actions --}}
+        <div class="flex flex-wrap items-center gap-2">
+            <button wire:click="study" class="px-3 py-2 rounded border hover:bg-gray-50">Study</button>
+            <button wire:click="analytics" class="px-3 py-2 rounded border hover:bg-gray-50">Analytics</button>
+            <button wire:click="editDeck" class="px-3 py-2 rounded border hover:bg-gray-50">Edit Deck</button>
+            <button wire:click="newFlashcard" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">+ New Flashcard</button>
+
+            <button wire:click="confirmDeleteDeck"
+                    class="px-3 py-2 rounded bg-red-600 text-white hover:bg-red-700">
+                Delete Deck
+            </button>
         </div>
     </div>
 
-    {{-- Action bar --}}
-    <div class="flex items-center justify-between">
-        <div class="text-sm text-gray-500">
-            {{ $items->total() }} item(s)
+    {{-- List --}}
+    <div class="bg-white border rounded-lg overflow-hidden">
+        <div class="border-b p-3 text-sm text-gray-600">
+            Showing {{ $items->firstItem() ?? 0 }}–{{ $items->lastItem() ?? 0 }} of {{ $items->total() }}
         </div>
-        <button
-            wire:click="openCreate"
-            class="px-4 py-2 text-white bg-black rounded hover:opacity-90"
-        >
-            + New flashcard
-        </button>
-    </div>
 
-    {{-- Items list (paginated) --}}
-    <div class="border divide-y rounded">
-        @forelse($items as $it)
-            <div class="p-4 space-y-2">
-                <div class="text-xs text-gray-400">
-                    #{{ $it->id }} • {{ $it->created_at?->diffForHumans() }} • Type: {{ $it->type }}
-                </div>
-
-                <div class="flex items-start justify-between gap-4">
+        <div class="divide-y">
+            @forelse ($items as $it)
+                <div class="p-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div class="min-w-0">
-                        <div class="font-medium break-words">Q: {{ $it->front }}</div>
-                        <div class="mt-1 text-sm text-gray-700 break-words">A: {{ $it->back }}</div>
+                        <div class="font-medium truncate">
+                            {{ $it->front ?? data_get($it, 'data.front') ?? '—' }}
+                        </div>
+                        <div class="text-sm text-gray-600 truncate">
+                            {{ $it->back ?? data_get($it, 'data.back') ?? '—' }}
+                        </div>
                     </div>
-                    <div class="space-x-2 shrink-0">
-                        <button
-                            wire:click="openEdit({{ $it->id }})"
-                            class="text-sm underline"
-                        >Edit</button>
-                        <button
-                            wire:click="deleteItem({{ $it->id }})"
-                            class="text-sm text-red-600 underline"
-                        >Delete</button>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a href="{{ route('flashcards.edit', ['deckId' => $deck->id, 'itemId' => $it->id]) }}"
+                           class="px-3 py-1.5 rounded border hover:bg-gray-50 text-sm">Edit</a>
+
+                        <button wire:click="confirmDeleteItem({{ $it->id }})"
+                                class="px-3 py-1.5 rounded bg-red-600 text-white hover:bg-red-700 text-sm">
+                            Delete
+                        </button>
                     </div>
                 </div>
+            @empty
+                <div class="p-8 text-center text-gray-600">No flashcards yet. Create the first one!</div>
+            @endforelse
+        </div>
+
+        @if($items->hasPages())
+            <div class="p-3">
+                {{ $items->links() }}
             </div>
-        @empty
-            <div class="p-4 text-gray-500">No items found.</div>
-        @endforelse
+        @endif
     </div>
 
-    {{-- Pagination --}}
-    <div>
-        {{ $items->links() }}
+    {{-- Backdrop + MODAL (Delete Item) --}}
+    <div x-show="showItemModal" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         x-transition.opacity>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showItemModal=false"></div>
+
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 ring-1 ring-gray-200"
+             x-transition.scale.origin.center>
+            <div class="flex items-start gap-3">
+                <div class="shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">🗑️</div>
+                <div>
+                    <h2 class="text-lg font-semibold">Delete flashcard?</h2>
+                    <p class="text-gray-600 mt-1">This action cannot be undone.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-2">
+                <button @click="showItemModal=false"
+                        class="px-4 py-2 rounded-lg border hover:bg-gray-50">Cancel</button>
+                <button wire:click="deleteItem"
+                        class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Delete</button>
+            </div>
+        </div>
     </div>
 
-    {{-- ==== Modal: Create ==== --}}
-    @if ($showCreate)
-        <dialog open class="w-full max-w-xl p-0 rounded-lg shadow-2xl">
-            <div class="p-5 space-y-3">
-                <div class="text-lg font-semibold">New flashcard</div>
+    {{-- Backdrop + MODAL (Delete Deck) --}}
+    <div x-show="showDeckModal" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         x-transition.opacity>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showDeckModal=false"></div>
 
-                <input
-                    type="text"
-                    placeholder="Front (question / term)…"
-                    wire:model="createFront"
-                    class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
-                >
-                @error('createFront') <div class="text-sm text-red-600">{{ $message }}</div> @enderror
-
-                <textarea
-                    placeholder="Back (answer / definition)…"
-                    wire:model="createBack"
-                    class="border rounded px-3 py-2 w-full min-h-[120px] focus:outline-none focus:ring focus:ring-gray-200"
-                ></textarea>
-                @error('createBack') <div class="text-sm text-red-600">{{ $message }}</div> @enderror
-
-                <div class="flex items-center justify-end gap-2 pt-2">
-                    <button wire:click="closeCreate" class="px-4 py-2 border rounded">Cancel</button>
-                    <button wire:click="storeItem" class="px-4 py-2 text-white bg-black rounded hover:opacity-90">Create</button>
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 ring-1 ring-gray-200"
+             x-transition.scale.origin.center>
+            <div class="flex items-start gap-3">
+                <div class="shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">⚠️</div>
+                <div>
+                    <h2 class="text-lg font-semibold">Delete deck?</h2>
+                    <p class="text-gray-600 mt-1">This will permanently delete the deck and its flashcards.</p>
                 </div>
             </div>
-        </dialog>
-        <div class="fixed inset-0 bg-black/40"></div>
-    @endif
 
-    {{-- ==== Modal: Edit ==== --}}
-    @if ($showEdit)
-        <dialog open class="w-full max-w-xl p-0 rounded-lg shadow-2xl">
-            <div class="p-5 space-y-3">
-                <div class="text-lg font-semibold">Edit flashcard #{{ $editId }}</div>
-
-                <input
-                    type="text"
-                    placeholder="Front…"
-                    wire:model="editFront"
-                    class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-200"
-                >
-                @error('editFront') <div class="text-sm text-red-600">{{ $message }}</div> @enderror
-
-                <textarea
-                    placeholder="Back…"
-                    wire:model="editBack"
-                    class="border rounded px-3 py-2 w-full min-h-[120px] focus:outline-none focus:ring focus:ring-gray-200"
-                ></textarea>
-                @error('editBack') <div class="text-sm text-red-600">{{ $message }}</div> @enderror
-
-                <div class="flex items-center justify-between pt-2">
-                    <button wire:click="closeEdit" class="px-4 py-2 border rounded">Cancel</button>
-                    <div class="space-x-2">
-                        <button wire:click="updateItem" class="px-4 py-2 text-white bg-black rounded hover:opacity-90">Save</button>
-                    </div>
-                </div>
+            <div class="mt-6 flex justify-end gap-2">
+                <button @click="showDeckModal=false"
+                        class="px-4 py-2 rounded-lg border hover:bg-gray-50">Cancel</button>
+                <button wire:click="deleteDeck"
+                        class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Delete</button>
             </div>
-        </dialog>
-        <div class="fixed inset-0 bg-black/40"></div>
-    @endif
+        </div>
+    </div>
 </div>

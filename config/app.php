@@ -126,10 +126,10 @@ return [
     'providers' => ServiceProvider::defaultProviders()->merge([
     App\Providers\AppServiceProvider::class,
 
-
     // provider riêng của bạn
     App\Providers\DomainServiceProvider::class,
     App\Providers\ServicesServiceProvider::class,
+    App\Providers\AuthServiceProvider::class,
 ])->toArray(),
 
 

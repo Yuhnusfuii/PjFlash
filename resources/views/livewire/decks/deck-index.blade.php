@@ -1,91 +1,72 @@
-<div class="max-w-6xl mx-auto p-6 space-y-6">
-
+<div class="max-w-6xl p-6 mx-auto space-y-6">
     {{-- Flash --}}
     @if (session('ok'))
-        <div class="p-3 rounded bg-green-100 text-green-800 text-sm">{{ session('ok') }}</div>
+        <div class="p-3 text-green-800 bg-green-100 rounded">
+            {{ session('ok') }}
+        </div>
     @endif
 
-    {{-- Search --}}
-    <div class="flex items-center gap-3">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-semibold">Decks</h1>
+    </div>
+
+    {{-- Search + Create --}}
+    <div class="space-y-2">
         <input
             type="text"
             placeholder="Search decks..."
+            class="w-full px-3 py-2 border rounded-lg"
             wire:model.live.debounce.300ms="q"
-            class="border rounded px-3 py-2 w-full focus:outline-none focus:ring focus:ring-gray-200"
-        >
-        <a href="{{ route('decks.index') }}" class="text-sm underline">Reset</a>
+        />
+
+        <div class="flex items-center gap-2">
+            <input
+                type="text"
+                placeholder="New deck name..."
+                class="flex-1 px-3 py-2 border rounded-lg"
+                wire:model.defer="newName"
+                wire:keydown.enter.prevent="createDeck"
+            />
+            <button
+                wire:click="createDeck"
+                class="px-4 py-2 text-white bg-black rounded hover:opacity-90">
+                Create
+            </button>
+        </div>
+        @error('newName') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    {{-- Create --}}
-    <div class="flex items-center gap-2">
-        <input
-            type="text"
-            placeholder="New deck name..."
-            wire:model="newName"
-            class="border rounded px-3 py-2 w-full focus:outline-none focus:ring focus:ring-gray-200"
-        >
-        <button wire:click="createDeck" class="px-4 py-2 rounded bg-black text-white hover:opacity-90">
-            Create
-        </button>
-    </div>
-
-    {{-- Deck list --}}
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        @forelse ($decks as $deck)
-            <div class="group border rounded-xl p-4 hover:shadow-sm transition bg-white">
-                {{-- Header: time + ID badge --}}
-                <div class="flex items-center justify-between">
-                    <div class="text-xs text-gray-500">{{ $deck->created_at?->diffForHumans() }}</div>
-                    <div class="text-[11px] px-2 py-1 rounded border text-gray-600 bg-gray-50">
-                        #{{ $deck->id }}
-                    </div>
+    {{-- Deck cards --}}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        @forelse ($decks as $d)
+            <div class="p-4 transition border rounded-xl hover:shadow-sm">
+                <div class="flex items-center gap-2 mb-1 text-xs text-gray-500">
+                    <span>{{ $d->created_at?->diffForHumans() ?? '—' }}</span>
+                    <span class="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">#{{ $d->items_count }}</span>
                 </div>
 
-                {{-- Title --}}
-                <div class="mt-2 text-lg font-semibold line-clamp-2">
-                    <a href="{{ route('decks.show', $deck) }}"
-                       class="hover:underline decoration-2">
-                        {{ $deck->name }}
-                    </a>
-                </div>
-
-                {{-- Description (optional) --}}
-                @if(!empty($deck->description))
-                    <div class="mt-2 text-sm text-gray-600 line-clamp-2">
-                        {{ $deck->description }}
-                    </div>
+                <h3 class="font-semibold">{{ $d->name }}</h3>
+                @if($d->description)
+                    <p class="mt-1 text-sm text-gray-600 line-clamp-2">{{ $d->description }}</p>
                 @endif
 
-                {{-- Footer actions --}}
-                <div class="mt-4 flex items-center justify-between">
-                    {{-- (tuỳ chọn) due count nhanh --}}
-                    <span class="text-xs text-gray-500">
-                        {{-- nếu muốn hiển thị số due, bạn có thể eager load riêng; tạm để placeholder hoặc bỏ đi --}}
-                    </span>
-
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('decks.show', $deck) }}"
-                           class="px-3 py-1.5 rounded border text-sm hover:bg-gray-50">
-                            Open
-                        </a>
-                        <a href="{{ route('study.panel', $deck) }}"
-                           class="px-3 py-1.5 rounded bg-black text-white text-sm hover:opacity-90">
-                            Study
-                        </a>
-                        <a href="{{ route('decks.analytics', $deck) }}"
-                           class="px-3 py-1.5 rounded border text-sm hover:bg-gray-50">
-                            Analytics
-                        </a>
-                    </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="{{ route('decks.show', ['deck' => $d->id]) }}"
+                       class="px-3 py-1.5 rounded border hover:bg-gray-50 text-sm">Open</a>
+                    <a href="{{ route('decks.study', ['deck' => $d->id]) }}"
+                       class="px-3 py-1.5 rounded bg-black text-white text-sm">Study</a>
+                    <a href="{{ route('decks.analytics', ['deck' => $d->id]) }}"
+                       class="px-3 py-1.5 rounded border hover:bg-gray-50 text-sm">Analytics</a>
                 </div>
             </div>
         @empty
-            <div class="col-span-full text-gray-500">No decks found.</div>
+            <div class="text-gray-600">No decks yet.</div>
         @endforelse
     </div>
 
-    {{-- Pagination --}}
-    <div>
-        {{ $decks->links() }}
-    </div>
+    @if($decks->hasPages())
+        <div>
+            {{ $decks->links() }}
+        </div>
+    @endif
 </div>

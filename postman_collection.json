@@ -1,0 +1,237 @@
+{
+  "info": {
+    "name": "PjFlash API",
+    "_postman_id": "a6f2d6f5-2d9b-4c50-9f5b-ffff0000abcd",
+    "description": "Auth (Sanctum), Decks/Items CRUD, Study, Generator, Analytics",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (get token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password\",\n  \"device\": \"postman\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Logout (revoke token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Decks",
+      "item": [
+        {
+          "name": "List decks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/decks"
+          }
+        },
+        {
+          "name": "Create deck",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/decks",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"My deck\", \"description\": \"optional\" }" }
+          }
+        },
+        {
+          "name": "Show deck",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/decks/::deckId"
+          }
+        },
+        {
+          "name": "Update deck",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/decks/::deckId",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Renamed\" }" }
+          }
+        },
+        {
+          "name": "Delete deck",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/decks/::deckId"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Items",
+      "item": [
+        {
+          "name": "List items in deck",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/decks/::deckId/items"
+          }
+        },
+        {
+          "name": "Create flashcard",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/decks/::deckId/items",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"flashcard\",\n  \"data\": { \"front\": \"hello\", \"back\": \"xin chào\" }\n}"
+            }
+          }
+        },
+        {
+          "name": "Show item",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items/::itemId"
+          }
+        },
+        {
+          "name": "Update item (edit flashcard)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/items/::itemId",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"data\": { \"front\": \"hi\", \"back\": \"chào\" } }"
+            }
+          }
+        },
+        {
+          "name": "Delete item",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items/::itemId"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Study",
+      "item": [
+        {
+          "name": "Next card (by deck)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/study/decks/::deckId/next"
+          }
+        },
+        {
+          "name": "Grade",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/study/grade",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"item_id\": ::itemId, \"rating\": 5, \"duration_ms\": 0 }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Generator",
+      "item": [
+        {
+          "name": "MCQ by item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/generator/mcq",
+            "body": { "mode": "raw", "raw": "{ \"item_id\": ::itemId, \"n\": 4 }" }
+          }
+        },
+        {
+          "name": "MCQ by deck (random item)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/api/generator/mcq",
+            "body": { "mode": "raw", "raw": "{ \"deck_id\": ::deckId, \"n\": 4 }" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Overview (all decks)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/analytics/decks"
+          }
+        },
+        {
+          "name": "Deck analytics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/analytics/decks/::deckId"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,10 @@ use Illuminate\Http\Response;
 use App\Http\Requests\{StoreDeckRequest, UpdateDeckRequest};
 class DeckController extends Controller
 {
+     public function __construct()
+    {
+        $this->middleware('auth'); // web guard
+    }
     public function index(Request $request)
     {
         $decks = Deck::query()
@@ -19,7 +23,7 @@ class DeckController extends Controller
         return response()->json($decks);
     }
 
-   public function store(StoreDeckRequest $request)
+    public function store(StoreDeckRequest $request)
     {
     $data = $request->validated();
 
@@ -27,7 +31,7 @@ class DeckController extends Controller
         'user_id' => $request->user()->id,
     ]);
 
-    return response()->json($deck, \Illuminate\Http\Response::HTTP_CREATED);
+    return response()->json($deck, Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Deck $deck)

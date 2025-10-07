@@ -2,66 +2,82 @@
 
 namespace App\Livewire\Analytics;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Carbon;
 use App\Models\Deck;
 use App\Models\Item;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.app')]
 class DeckAnalytics extends Component
 {
-    use AuthorizesRequests;
-
     public Deck $deck;
 
-    // outputs
-    public int $total = 0;
-    public int $dueNow = 0;
-    public int $scheduled = 0;
-    public int $learned = 0;     // repetition >= 1
-    public float $avgEf = 0.0;
-    public int $reviewedToday = 0;
+    // KPI
+    public int $totalItems            = 0;
+    public int $dueNowCount           = 0;
+    public int $scheduledCount        = 0;
+    public int $learnedCount          = 0;
+    public int $reviewedTodayCount    = 0;
+    public float $avgEf               = 0.0;
 
-    /** mini chart: reviews per day (7 ngày gần nhất) */
-    public array $daily = []; // [['date' => '2025-09-16', 'count' => 4], ...]
+    // 7 ngày gần đây
+    public array $dailyReviewedSeries = []; // [['label'=>'Mon', 'count'=>3, 'date'=>'2025-10-01'], ...]
 
     public function mount(Deck $deck): void
     {
-        $this->authorize('view', $deck);
+        // bảo vệ quyền xem deck
+        if ($deck->user_id !== Auth::id()) {
+            abort(403);
+        }
         $this->deck = $deck;
         $this->compute();
     }
 
     protected function compute(): void
     {
-        $now = Carbon::now();
-        $startToday = $now->copy()->startOfDay();
+        $now   = Carbon::now();
+        $today = Carbon::today();
 
-        $q = Item::query()->where('deck_id', $this->deck->id);
+        $base = Item::query()->where('deck_id', $this->deck->id);
 
-        $this->total     = (clone $q)->count();
-        $this->dueNow    = (clone $q)->where(function ($qq) use ($now) {
-                            $qq->whereNull('due_at')->orWhere('due_at', '<=', $now);
-                        })->count();
-        $this->scheduled = (clone $q)->whereNotNull('due_at')->where('due_at', '>', $now)->count();
-        $this->learned   = (clone $q)->where('repetition', '>=', 1)->count();
-        $this->avgEf     = round((float)(clone $q)->avg('ef') ?? 0, 2);
-        $this->reviewedToday = (clone $q)->where('last_reviewed_at', '>=', $startToday)->count();
+        // Tổng
+        $this->totalItems = (clone $base)->count();
 
-        // 7 ngày gần nhất
-        $this->daily = [];
+        // Learned: repetition >= 1
+        $this->learnedCount = (clone $base)->where('repetition', '>=', 1)->count();
+
+        // Reviewed today
+        $this->reviewedTodayCount = (clone $base)->whereDate('last_reviewed_at', $today)->count();
+
+        // Due now (due_at null hoặc <= now)
+        $this->dueNowCount = (clone $base)
+            ->where(function ($q) use ($now) {
+                $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
+            })
+            ->count();
+
+        // Scheduled (due_at > now)
+        $this->scheduledCount = (clone $base)
+            ->where('due_at', '>', $now)
+            ->count();
+
+        // Avg EF
+        $this->avgEf = (float) (clone $base)->avg('ef') ?: 0.0;
+
+        // Chuỗi 7 ngày (từ 6 ngày trước -> hôm nay)
+        $series = [];
         for ($i = 6; $i >= 0; $i--) {
-            $dStart = $now->copy()->subDays($i)->startOfDay();
-            $dEnd   = $now->copy()->subDays($i)->endOfDay();
-
-            $count = (clone $q)->whereBetween('last_reviewed_at', [$dStart, $dEnd])->count();
-            $this->daily[] = [
-                'date'  => $dStart->toDateString(),
-                'count' => $count,
+            $day = Carbon::today()->subDays($i);
+            $count = (clone $base)->whereDate('last_reviewed_at', $day)->count();
+            $series[] = [
+                'date'  => $day->toDateString(),
+                'label' => $day->format('D'),
+                'count' => (int) $count,
             ];
         }
+        $this->dailyReviewedSeries = $series;
     }
 
     public function render()

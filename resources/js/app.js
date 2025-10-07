@@ -1,5 +1,9 @@
 // resources/js/app.js
 import './bootstrap';
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+import './matching'
+Alpine.start()
 
 // Ngăn khởi tạo trùng (nếu app.js bị nạp 2 lần ở đâu đó)
 if (!window.__pjflashInit) {

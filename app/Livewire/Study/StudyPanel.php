@@ -4,10 +4,12 @@ namespace App\Livewire\Study;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Models\Deck;
-use App\Models\Item;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
+use App\Models\{Deck, Item, ReviewState};
+use App\Services\SrsService;
+use App\Enums\ReviewRating;
 
 #[Layout('layouts.app')]
 class StudyPanel extends Component
@@ -16,81 +18,223 @@ class StudyPanel extends Component
 
     public Deck $deck;
     public ?Item $current = null;
+
+    // UI state
+    // CHỈ còn: 'auto' | 'flashcard' | 'mcq'  (đã loại 'matching')
+    public string $mode = 'auto';
     public bool $showAnswer = false;
+
+    // Queue mode: 'due' | 'mix' | 'new'
+    public string $queueMode = 'mix';
+
+    // Session counters/limits
+    public int $reviewsThisSession   = 0;
+    public int $newThisSession       = 0;
+    public int $maxReviewsPerSession = 100;
+    public int $maxNewPerSession     = 20;
+
+    // Info for current pick
+    protected bool $currentWasNew = false;
+
+    // Dashboard-ish numbers
+    public int $dueRemaining = 0;
+    public int $newRemaining = 0;
+
+    // End state
+    public bool $sessionEnded = false;
 
     public function mount(Deck $deck): void
     {
         $this->authorize('view', $deck);
         $this->deck = $deck;
-        $this->loadNextItem();
-    }
-
-    protected function loadNextItem(): void
-    {
-        $now = Carbon::now();
-        $this->current = Item::where('deck_id', $this->deck->id)
-            ->where(function ($q) use ($now) {
-                $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
-            })
-            ->orderBy('due_at','asc')
-            ->first();
-
-        $this->showAnswer = false;
-    }
-
-    public function reveal(): void
-    {
-        $this->showAnswer = true;
-    }
-
-    /**
-     * Chấm điểm 0–5 theo SM-2
-     */
-    public function grade(int $q): void
-    {
-        if (!$this->current) return;
-
-        $item = $this->current;
-
-        // --- SM-2 Algorithm ---
-        $ef = $item->ef;
-        $rep = $item->repetition;
-        $int = $item->interval;
-
-        if ($q < 3) {
-            $rep = 0;
-            $int = 1;
-        } else {
-            if ($rep == 0) {
-                $int = 1;
-            } elseif ($rep == 1) {
-                $int = 6;
-            } else {
-                $int = round($int * $ef);
-            }
-            $rep++;
-        }
-
-        // update EF
-        $ef = $ef + (0.1 - (5 - $q) * (0.08 + (5 - $q) * 0.02));
-        if ($ef < 1.3) $ef = 1.3;
-
-        $item->update([
-            'ef' => $ef,
-            'interval' => $int,
-            'repetition' => $rep,
-            'due_at' => now()->addDays($int),
-            'review_count' => $item->review_count + 1,
-            'last_reviewed_at' => now(),
-        ]);
-
+        $this->refreshCounts();
         $this->loadNextItem();
     }
 
     public function render()
     {
-        return view('livewire.study.study-panel', [
-            'current' => $this->current,
-        ]);
+        return view('livewire.study.study-panel');
+    }
+
+    // ===== UI actions =====
+
+    public function setMode(string $mode): void
+    {
+        // CHỈ cho phép 3 mode; nếu view cũ còn nút Matching, nhấn vào cũng sẽ bị ép về 'auto'
+        $allowed = ['auto', 'flashcard', 'mcq'];
+        $this->mode = in_array($mode, $allowed, true) ? $mode : 'auto';
+        $this->showAnswer = false;
+    }
+
+    public function setQueueMode(string $mode): void
+    {
+        $allowed = ['due','mix','new'];
+        $this->queueMode = in_array($mode, $allowed, true) ? $mode : 'mix';
+        $this->showAnswer = false;
+        $this->loadNextItem();
+    }
+
+    /**
+     * Nhận điểm từ UI và cập nhật SRS:
+     * - Flashcard: 0=Again, 1=Hard, 2=Good, 3+=Easy
+     * - MCQ: view gửi 5 (đúng) hoặc 1 (sai) → map tương ứng
+     */
+    public function grade(int $rating, int $durationMs = 0): void
+    {
+        if (!$this->current) return;
+
+        $user = Auth::user();
+
+        $rr = match (true) {
+            $rating <= 0                   => ReviewRating::AGAIN,
+            $rating === 1                  => ReviewRating::HARD,
+            $rating === 2 || $rating === 3 => ReviewRating::GOOD,
+            default                        => ReviewRating::EASY,
+        };
+
+        app(SrsService::class)->review($user, $this->current, $rr, $durationMs);
+
+        // Session counters
+        $this->reviewsThisSession++;
+        if ($this->currentWasNew) {
+            $this->newThisSession++;
+        }
+
+        $this->showAnswer = false;
+        $this->refreshCounts();
+        $this->loadNextItem();
+    }
+
+    /** View muốn reload item hiện tại */
+    public function refreshCurrent(): void
+    {
+        if ($this->current) {
+            $this->current->refresh();
+        }
+    }
+
+    public function nextCard(): void
+    {
+        $this->showAnswer = false;
+        $this->loadNextItem();
+    }
+
+    // ===== Queue logic =====
+
+    protected function refreshCounts(): void
+    {
+        $userId = Auth::id();
+        $now    = Carbon::now();
+
+        $this->dueRemaining = ReviewState::query()
+            ->where('user_id', $userId)
+            ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+            ->where(function ($q) use ($now) {
+                $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
+            })
+            ->count();
+
+        $this->newRemaining = Item::query()
+            ->where('deck_id', $this->deck->id)
+            ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
+            ->count();
+    }
+
+    /**
+     * Logic lấy thẻ theo queue mode:
+     *  - 'due' : chỉ lấy thẻ DUE; nếu không còn → kết thúc phiên
+     *  - 'new' : chỉ lấy thẻ NEW; tôn trọng maxNewPerSession; nếu hết → kết thúc phiên
+     *  - 'mix' : ưu tiên DUE → NEW (tôn trọng giới hạn) → next soon
+     */
+    protected function loadNextItem(): void
+    {
+        $this->current = null;
+        $this->currentWasNew = false;
+        $this->sessionEnded = false;
+
+        $userId = Auth::id();
+        $now    = Carbon::now();
+
+        // Nếu đã chạm trần review & không còn due ⇒ end
+        if ($this->queueMode !== 'due' &&
+            $this->reviewsThisSession >= $this->maxReviewsPerSession &&
+            $this->dueRemaining === 0) {
+            $this->sessionEnded = true;
+            return;
+        }
+
+        // Helper closures
+        $pickDue = function () use ($userId, $now) {
+            return ReviewState::query()
+                ->where('user_id', $userId)
+                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
+                })
+                ->orderBy('due_at', 'asc')
+                ->with('item')
+                ->first()?->item;
+        };
+
+        $pickNew = function () use ($userId) {
+            return Item::query()
+                ->where('deck_id', $this->deck->id)
+                ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
+                ->orderBy('id')
+                ->first();
+        };
+
+        $pickNextSoon = function () use ($userId) {
+            return ReviewState::query()
+                ->where('user_id', $userId)
+                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+                ->whereNotNull('due_at')
+                ->orderBy('due_at', 'asc')
+                ->with('item')
+                ->first()?->item;
+        };
+
+        switch ($this->queueMode) {
+            case 'due':
+                $due = $pickDue();
+                if ($due) { $this->current = $due; return; }
+                $this->sessionEnded = true;
+                return;
+
+            case 'new':
+                if ($this->newThisSession >= $this->maxNewPerSession) {
+                    $this->sessionEnded = true;
+                    return;
+                }
+                $new = $pickNew();
+                if ($new) {
+                    app(SrsService::class)->init(Auth::user(), $new);
+                    $this->current = $new;
+                    $this->currentWasNew = true;
+                    return;
+                }
+                $this->sessionEnded = true;
+                return;
+
+            default: // mix
+                $due = $pickDue();
+                if ($due) { $this->current = $due; return; }
+
+                if ($this->newThisSession < $this->maxNewPerSession) {
+                    $new = $pickNew();
+                    if ($new) {
+                        app(SrsService::class)->init(Auth::user(), $new);
+                        $this->current = $new;
+                        $this->currentWasNew = true;
+                        return;
+                    }
+                }
+
+                $soon = $pickNextSoon();
+                if ($soon) { $this->current = $soon; return; }
+
+                $this->sessionEnded = true;
+                return;
+        }
     }
 }

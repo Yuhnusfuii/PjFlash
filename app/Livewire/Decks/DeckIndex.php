@@ -3,25 +3,31 @@
 namespace App\Livewire\Decks;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Layout;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Deck;
-use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
 class DeckIndex extends Component
 {
     use AuthorizesRequests;
+    use WithPagination;
 
     #[Url(as: 'q')]
     public string $q = '';
 
     public string $newName = '';
 
-    /**
-     * Tạo deck mới.
-     */
+    /** Reset về trang 1 mỗi khi thay đổi từ khóa */
+    public function updatingQ(): void
+    {
+        $this->resetPage();
+    }
+
+    /** Tạo deck mới */
     public function createDeck(): void
     {
         $this->authorize('create', Deck::class);
@@ -37,12 +43,11 @@ class DeckIndex extends Component
         ]);
 
         $this->newName = '';
+        $this->resetPage(); // để deck mới (latest) nằm ở trang đầu
         session()->flash('ok', 'Deck created!');
     }
 
-    /**
-     * Computed property: danh sách deck theo user + keyword.
-     */
+    /** Computed: danh sách deck theo user + keyword */
     public function getDecksProperty()
     {
         return Deck::query()
@@ -50,14 +55,15 @@ class DeckIndex extends Component
             ->when($this->q !== '', fn ($q) =>
                 $q->where('name', 'like', '%' . $this->q . '%')
             )
+            ->withCount('items')
             ->latest('id')
-            ->paginate(10);
+            ->paginate(12);
     }
 
     public function render()
     {
         return view('livewire.decks.deck-index', [
-            'decks' => $this->decks,
+            'decks' => $this->decks, // gọi accessor getDecksProperty()
         ]);
     }
 }
