@@ -42,7 +42,7 @@
 
     {{-- ===== Top controls ===== --}}
     <div class="flex flex-wrap items-center justify-between gap-3">
-        {{-- Mode Switcher (chỉ còn Flashcard/MCQ/Auto) --}}
+        {{-- Mode Switcher (Study chỉ Flashcard; giữ Auto để không vỡ UI cũ) --}}
         <div class="flex items-center gap-2 text-sm">
             <span class="text-gray-500">Mode:</span>
             <div class="flex gap-1">
@@ -53,10 +53,6 @@
                 <button wire:click="setMode('flashcard')"
                         @class(['px-3 py-1.5 rounded-xl border', $mode === 'flashcard' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'])>
                     Flashcard
-                </button>
-                <button wire:click="setMode('mcq')"
-                        @class(['px-3 py-1.5 rounded-xl border', $mode === 'mcq' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'])>
-                    MCQ
                 </button>
             </div>
         </div>
@@ -69,7 +65,7 @@
                         @class(['px-3 py-1.5 rounded-xl border', $queueMode === 'due' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'])>
                     Only due
                 </button>
-                <button wire:click="setQueueMode('mix')"
+            <button wire:click="setQueueMode('mix')"
                         @class(['px-3 py-1.5 rounded-xl border', $queueMode === 'mix' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white hover:bg-gray-50'])>
                     Mix
                 </button>
@@ -92,20 +88,16 @@
             <div class="flex items-center justify-center gap-2 mt-4">
                 <a href="{{ route('decks.show', $deck) }}" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Back to deck</a>
                 <button wire:click="$refresh" class="px-4 py-2 text-white bg-black rounded-lg hover:opacity-90">Refresh</button>
+                {{-- Lối tắt sang quiz MCQ riêng --}}
+                @auth
+                    <a href="{{ route('mcq.home') }}" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Go to MCQ Quiz</a>
+                @endauth
             </div>
         </div>
     @else
         @php
-            // Không còn matching: nếu auto → chỉ chọn giữa flashcard/mcq
-            $itemType = is_object($current?->type) ? ($current?->type->value ?? 'flashcard') : ($current?->type ?? 'flashcard');
-            $viewMode = $mode === 'auto' ? $itemType : $mode;
-
-            if ($mode === 'auto') {
-                $choices = data_get($current->data ?? [], 'mcq.options', []);
-                $noMcq   = !is_array($choices) || count($choices) < 2;
-                if ($viewMode === 'mcq' && $noMcq) $viewMode = 'flashcard';
-                if ($viewMode === 'matching')      $viewMode = 'flashcard';
-            }
+            // Study chỉ Flashcard; nếu 'auto' thì cũng hiển thị flashcard
+            $viewMode = 'flashcard';
         @endphp
 
         <div class="flex items-center justify-between text-xs text-gray-500">
@@ -118,11 +110,8 @@
                 <h3 class="text-lg font-semibold">Không có thẻ để học.</h3>
             </div>
         @else
-            @if ($viewMode === 'mcq')
-                @include('study.partials.mcq', ['item' => $current])
-            @else
-                @include('study.partials.flashcard', ['item' => $current, 'showAnswer' => $showAnswer])
-            @endif
+            {{-- Chỉ còn flashcard --}}
+            @include('study.partials.flashcard', ['item' => $current, 'showAnswer' => $showAnswer])
         @endif
     @endif
 </div>

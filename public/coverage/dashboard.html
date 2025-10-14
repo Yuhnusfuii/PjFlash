@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for D:\All code\PjFlash\app</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="index.html">D:\All code\PjFlash\app</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Console/Kernel.php.html#8">App\Console\Kernel</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AnalyticsController.php.html#10">App\Http\Controllers\Api\AnalyticsController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#9">App\Http\Controllers\Api\AuthController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/GeneratorController.php.html#9">App\Http\Controllers\Api\GeneratorController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#9">App\Http\Controllers\Api\ItemController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#18">App\Http\Controllers\Api\StudyController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationNotificationController.php.html#9">App\Http\Controllers\Auth\EmailVerificationNotificationController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#13">App\Http\Controllers\Auth\GoogleController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#9">App\Http\Controllers\DeckController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#12">App\Http\Controllers\GeneratorController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#12">App\Http\Controllers\ItemController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ImportCsvRequest.php.html#7">App\Http\Requests\ImportCsvRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfileAvatarRequest.php.html#7">App\Http\Requests\ProfileAvatarRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfilePasswordRequest.php.html#7">App\Http\Requests\ProfilePasswordRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ReviewRequest.php.html#7">App\Http\Requests\ReviewRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreDeckRequest.php.html#7">App\Http\Requests\StoreDeckRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreItemRequest.php.html#8">App\Http\Requests\StoreItemRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateDeckRequest.php.html#7">App\Http\Requests\UpdateDeckRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateItemRequest.php.html#8">App\Http\Requests\UpdateItemRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#12">App\Livewire\Analytics\DeckAnalytics</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#12">App\Livewire\Analytics\DecksOverview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Cards/CardEditor.php.html#7">App\Livewire\Cards\CardEditor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#11">App\Livewire\Decks\DeckForm</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckIndex.php.html#13">App\Livewire\Decks\DeckIndex</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#12">App\Livewire\Decks\DeckShow</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#11">App\Livewire\Items\FlashcardForm</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/ItemForm.php.html#7">App\Livewire\Items\ItemForm</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHistory.php.html#10">App\Livewire\Study\McqHistory</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHome.php.html#14">App\Livewire\Study\McqHome</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#15">App\Livewire\Study\McqPanel</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#14">App\Livewire\Study\StudyPanel</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Quiz.php.html#9">App\Models\Quiz</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/QuizResult.php.html#8">App\Models\QuizResult</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Review.php.html#8">App\Models\Review</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/ReviewState.php.html#8">App\Models\ReviewState</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#9">App\Policies\ItemPolicy</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ReviewStatePolicy.php.html#8">App\Policies\ReviewStatePolicy</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/MatchingGeneratorService.php.html#9">App\Services\MatchingGeneratorService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/McqGeneratorService.php.html#10">App\Services\McqGeneratorService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SrsService.php.html#9">App\Services\SrsService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="View/Components/AppLayout.php.html#8">App\View\Components\AppLayout</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DashboardController.php.html#10">App\Http\Controllers\DashboardController</a></td><td class="text-right">6%</td></tr>
+       <tr><td><a href="Models/Deck.php.html#8">App\Models\Deck</a></td><td class="text-right">25%</td></tr>
+       <tr><td><a href="Http/Controllers/ProfileController.php.html#12">App\Http\Controllers\ProfileController</a></td><td class="text-right">30%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#11">App\Http\Controllers\Api\FlashcardController</a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Providers/AppServiceProvider.php.html#9">App\Providers\AppServiceProvider</a></td><td class="text-right">45%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/DeckController.php.html#10">App\Http\Controllers\Api\DeckController</a></td><td class="text-right">48%</td></tr>
+       <tr><td><a href="Models/Item.php.html#8">App\Models\Item</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Http/Requests/Auth/LoginRequest.php.html#12">App\Http\Requests\Auth\LoginRequest</a></td><td class="text-right">65%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationPromptController.php.html#10">App\Http\Controllers\Auth\EmailVerificationPromptController</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Policies/DeckPolicy.php.html#8">App\Policies\DeckPolicy</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/VerifyEmailController.php.html#10">App\Http\Controllers\Auth\VerifyEmailController</a></td><td class="text-right">80%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#14">App\Livewire\Study\StudyPanel</a></td><td class="text-right">1056</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#18">App\Http\Controllers\Api\StudyController</a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#12">App\Livewire\Decks\DeckShow</a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#15">App\Livewire\Study\McqPanel</a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#13">App\Http\Controllers\Auth\GoogleController</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Services/SrsService.php.html#9">App\Services\SrsService</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#12">App\Livewire\Analytics\DecksOverview</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#11">App\Livewire\Items\FlashcardForm</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#12">App\Http\Controllers\ItemController</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#9">App\Policies\ItemPolicy</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#12">App\Livewire\Analytics\DeckAnalytics</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#11">App\Livewire\Decks\DeckForm</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Http/Controllers/ProfileController.php.html#12">App\Http\Controllers\ProfileController</a></td><td class="text-right">23</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#9">App\Http\Controllers\Api\AuthController</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#12">App\Http\Controllers\GeneratorController</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Services/McqGeneratorService.php.html#10">App\Services\McqGeneratorService</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#11">App\Http\Controllers\Api\FlashcardController</a></td><td class="text-right">17</td></tr>
+       <tr><td><a href="Services/MatchingGeneratorService.php.html#9">App\Services\MatchingGeneratorService</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Requests/Auth/LoginRequest.php.html#12">App\Http\Requests\Auth\LoginRequest</a></td><td class="text-right">9</td></tr>
+       <tr><td><a href="Providers/AppServiceProvider.php.html#9">App\Providers\AppServiceProvider</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationNotificationController.php.html#9">App\Http\Controllers\Auth\EmailVerificationNotificationController</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/VerifyEmailController.php.html#10">App\Http\Controllers\Auth\VerifyEmailController</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationPromptController.php.html#10">App\Http\Controllers\Auth\EmailVerificationPromptController</a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Console/Kernel.php.html#10"><abbr title="App\Console\Kernel::schedule">schedule</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Kernel.php.html#19"><abbr title="App\Console\Kernel::commands">commands</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AnalyticsController.php.html#15"><abbr title="App\Http\Controllers\Api\AnalyticsController::deckAnalytics">deckAnalytics</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AnalyticsController.php.html#38"><abbr title="App\Http\Controllers\Api\AnalyticsController::overview">overview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#12"><abbr title="App\Http\Controllers\Api\AuthController::login">login</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#35"><abbr title="App\Http\Controllers\Api\AuthController::logout">logout</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#42"><abbr title="App\Http\Controllers\Api\AuthController::me">me</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/DeckController.php.html#50"><abbr title="App\Http\Controllers\Api\DeckController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/DeckController.php.html#60"><abbr title="App\Http\Controllers\Api\DeckController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/DeckController.php.html#78"><abbr title="App\Http\Controllers\Api\DeckController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/DeckController.php.html#90"><abbr title="App\Http\Controllers\Api\DeckController::import">import</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#17"><abbr title="App\Http\Controllers\Api\FlashcardController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#55"><abbr title="App\Http\Controllers\Api\FlashcardController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#67"><abbr title="App\Http\Controllers\Api\FlashcardController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/GeneratorController.php.html#14"><abbr title="App\Http\Controllers\Api\GeneratorController::generateMcq">generateMcq</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/GeneratorController.php.html#27"><abbr title="App\Http\Controllers\Api\GeneratorController::generateMatching">generateMatching</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#14"><abbr title="App\Http\Controllers\Api\ItemController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#22"><abbr title="App\Http\Controllers\Api\ItemController::store">store</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#38"><abbr title="App\Http\Controllers\Api\ItemController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#46"><abbr title="App\Http\Controllers\Api\ItemController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Api/ItemController.php.html#61"><abbr title="App\Http\Controllers\Api\ItemController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#20"><abbr title="App\Http\Controllers\Api\StudyController::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#30"><abbr title="App\Http\Controllers\Api\StudyController::review">review</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#110"><abbr title="App\Http\Controllers\Api\StudyController::generateMcq">generateMcq</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#157"><abbr title="App\Http\Controllers\Api\StudyController::generateMatching">generateMatching</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationNotificationController.php.html#14"><abbr title="App\Http\Controllers\Auth\EmailVerificationNotificationController::store">store</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#15"><abbr title="App\Http\Controllers\Auth\GoogleController::redirect">redirect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#26"><abbr title="App\Http\Controllers\Auth\GoogleController::callback">callback</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#69"><abbr title="App\Http\Controllers\Auth\GoogleController::googleEmailVerified">googleEmailVerified</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DashboardController.php.html#17"><abbr title="App\Http\Controllers\DashboardController::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#11"><abbr title="App\Http\Controllers\DeckController::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#15"><abbr title="App\Http\Controllers\DeckController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#26"><abbr title="App\Http\Controllers\DeckController::store">store</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#37"><abbr title="App\Http\Controllers\DeckController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#45"><abbr title="App\Http\Controllers\DeckController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DeckController.php.html#54"><abbr title="App\Http\Controllers\DeckController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#14"><abbr title="App\Http\Controllers\GeneratorController::mcq">mcq</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#27"><abbr title="App\Http\Controllers\GeneratorController::matching">matching</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#14"><abbr title="App\Http\Controllers\ItemController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#27"><abbr title="App\Http\Controllers\ItemController::store">store</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#40"><abbr title="App\Http\Controllers\ItemController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#46"><abbr title="App\Http\Controllers\ItemController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#56"><abbr title="App\Http\Controllers\ItemController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#66"><abbr title="App\Http\Controllers\ItemController::import">import</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ProfileController.php.html#35"><abbr title="App\Http\Controllers\ProfileController::updatePassword">updatePassword</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ProfileController.php.html#46"><abbr title="App\Http\Controllers\ProfileController::updateAvatar">updateAvatar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ImportCsvRequest.php.html#9"><abbr title="App\Http\Requests\ImportCsvRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ImportCsvRequest.php.html#14"><abbr title="App\Http\Requests\ImportCsvRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfileAvatarRequest.php.html#9"><abbr title="App\Http\Requests\ProfileAvatarRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfileAvatarRequest.php.html#15"><abbr title="App\Http\Requests\ProfileAvatarRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfilePasswordRequest.php.html#9"><abbr title="App\Http\Requests\ProfilePasswordRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfilePasswordRequest.php.html#15"><abbr title="App\Http\Requests\ProfilePasswordRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ProfilePasswordRequest.php.html#23"><abbr title="App\Http\Requests\ProfilePasswordRequest::messages">messages</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ReviewRequest.php.html#9"><abbr title="App\Http\Requests\ReviewRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/ReviewRequest.php.html#14"><abbr title="App\Http\Requests\ReviewRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreDeckRequest.php.html#9"><abbr title="App\Http\Requests\StoreDeckRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreDeckRequest.php.html#14"><abbr title="App\Http\Requests\StoreDeckRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreItemRequest.php.html#10"><abbr title="App\Http\Requests\StoreItemRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreItemRequest.php.html#15"><abbr title="App\Http\Requests\StoreItemRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/StoreItemRequest.php.html#40"><abbr title="App\Http\Requests\StoreItemRequest::messages">messages</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateDeckRequest.php.html#9"><abbr title="App\Http\Requests\UpdateDeckRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateDeckRequest.php.html#15"><abbr title="App\Http\Requests\UpdateDeckRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateItemRequest.php.html#10"><abbr title="App\Http\Requests\UpdateItemRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UpdateItemRequest.php.html#15"><abbr title="App\Http\Requests\UpdateItemRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#28"><abbr title="App\Livewire\Analytics\DeckAnalytics::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#38"><abbr title="App\Livewire\Analytics\DeckAnalytics::compute">compute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#83"><abbr title="App\Livewire\Analytics\DeckAnalytics::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#29"><abbr title="App\Livewire\Analytics\DecksOverview::updatingSearch">updatingSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#34"><abbr title="App\Livewire\Analytics\DecksOverview::sort">sort</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#45"><abbr title="App\Livewire\Analytics\DecksOverview::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Cards/CardEditor.php.html#9"><abbr title="App\Livewire\Cards\CardEditor::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#21"><abbr title="App\Livewire\Decks\DeckForm::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#32"><abbr title="App\Livewire\Decks\DeckForm::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#57"><abbr title="App\Livewire\Decks\DeckForm::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckIndex.php.html#25"><abbr title="App\Livewire\Decks\DeckIndex::updatingQ">updatingQ</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckIndex.php.html#31"><abbr title="App\Livewire\Decks\DeckIndex::createDeck">createDeck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckIndex.php.html#51"><abbr title="App\Livewire\Decks\DeckIndex::getDecksProperty">getDecksProperty</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckIndex.php.html#63"><abbr title="App\Livewire\Decks\DeckIndex::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#31"><abbr title="App\Livewire\Decks\DeckShow::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#37"><abbr title="App\Livewire\Decks\DeckShow::getItemsProperty">getItemsProperty</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#42"><abbr title="App\Livewire\Decks\DeckShow::newFlashcard">newFlashcard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#47"><abbr title="App\Livewire\Decks\DeckShow::editDeck">editDeck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#52"><abbr title="App\Livewire\Decks\DeckShow::study">study</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#57"><abbr title="App\Livewire\Decks\DeckShow::analytics">analytics</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#63"><abbr title="App\Livewire\Decks\DeckShow::confirmDeleteDeck">confirmDeleteDeck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#69"><abbr title="App\Livewire\Decks\DeckShow::deleteDeck">deleteDeck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#80"><abbr title="App\Livewire\Decks\DeckShow::confirmDeleteItem">confirmDeleteItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#87"><abbr title="App\Livewire\Decks\DeckShow::deleteItem">deleteItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#107"><abbr title="App\Livewire\Decks\DeckShow::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#30"><abbr title="App\Livewire\Items\FlashcardForm::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#60"><abbr title="App\Livewire\Items\FlashcardForm::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#69"><abbr title="App\Livewire\Items\FlashcardForm::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#107"><abbr title="App\Livewire\Items\FlashcardForm::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Items/ItemForm.php.html#9"><abbr title="App\Livewire\Items\ItemForm::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHistory.php.html#13"><abbr title="App\Livewire\Study\McqHistory::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHome.php.html#27"><abbr title="App\Livewire\Study\McqHome::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHome.php.html#36"><abbr title="App\Livewire\Study\McqHome::start">start</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqHome.php.html#50"><abbr title="App\Livewire\Study\McqHome::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#36"><abbr title="App\Livewire\Study\McqPanel::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#57"><abbr title="App\Livewire\Study\McqPanel::pick">pick</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#82"><abbr title="App\Livewire\Study\McqPanel::next">next</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#95"><abbr title="App\Livewire\Study\McqPanel::restart">restart</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#101"><abbr title="App\Livewire\Study\McqPanel::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#46"><abbr title="App\Livewire\Study\StudyPanel::mount">mount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#54"><abbr title="App\Livewire\Study\StudyPanel::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#61"><abbr title="App\Livewire\Study\StudyPanel::setMode">setMode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#69"><abbr title="App\Livewire\Study\StudyPanel::setQueueMode">setQueueMode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#82"><abbr title="App\Livewire\Study\StudyPanel::grade">grade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#109"><abbr title="App\Livewire\Study\StudyPanel::refreshCurrent">refreshCurrent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#116"><abbr title="App\Livewire\Study\StudyPanel::nextCard">nextCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#124"><abbr title="App\Livewire\Study\StudyPanel::refreshCounts">refreshCounts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#149"><abbr title="App\Livewire\Study\StudyPanel::loadNextItem">loadNextItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Deck.php.html#14"><abbr title="App\Models\Deck::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Deck.php.html#15"><abbr title="App\Models\Deck::parent">parent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Deck.php.html#16"><abbr title="App\Models\Deck::children">children</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Item.php.html#29"><abbr title="App\Models\Item::reviewStates">reviewStates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Quiz.php.html#14"><abbr title="App\Models\Quiz::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Quiz.php.html#15"><abbr title="App\Models\Quiz::deck">deck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Quiz.php.html#16"><abbr title="App\Models\Quiz::results">results</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/QuizResult.php.html#14"><abbr title="App\Models\QuizResult::quiz">quiz</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/QuizResult.php.html#15"><abbr title="App\Models\QuizResult::item">item</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Review.php.html#23"><abbr title="App\Models\Review::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Review.php.html#24"><abbr title="App\Models\Review::item">item</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/ReviewState.php.html#39"><abbr title="App\Models\ReviewState::item">item</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/ReviewState.php.html#40"><abbr title="App\Models\ReviewState::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/ReviewState.php.html#43"><abbr title="App\Models\ReviewState::scopeDue">scopeDue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/DeckPolicy.php.html#12"><abbr title="App\Policies\DeckPolicy::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#11"><abbr title="App\Policies\ItemPolicy::view">view</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#16"><abbr title="App\Policies\ItemPolicy::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#21"><abbr title="App\Policies\ItemPolicy::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#27"><abbr title="App\Policies\ItemPolicy::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ReviewStatePolicy.php.html#10"><abbr title="App\Policies\ReviewStatePolicy::view">view</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Policies/ReviewStatePolicy.php.html#15"><abbr title="App\Policies\ReviewStatePolicy::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/MatchingGeneratorService.php.html#11"><abbr title="App\Services\MatchingGeneratorService::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/McqGeneratorService.php.html#12"><abbr title="App\Services\McqGeneratorService::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SrsService.php.html#15"><abbr title="App\Services\SrsService::init">init</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SrsService.php.html#31"><abbr title="App\Services\SrsService::review">review</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="View/Components/AppLayout.php.html#13"><abbr title="App\View\Components\AppLayout::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/Auth/LoginRequest.php.html#60"><abbr title="App\Http\Requests\Auth\LoginRequest::ensureIsNotRateLimited">ensureIsNotRateLimited</abbr></a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="Providers/AppServiceProvider.php.html#22"><abbr title="App\Providers\AppServiceProvider::boot">boot</abbr></a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationPromptController.php.html#15"><abbr title="App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke">__invoke</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/VerifyEmailController.php.html#15"><abbr title="App\Http\Controllers\Auth\VerifyEmailController::__invoke">__invoke</abbr></a></td><td class="text-right">80%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#149"><abbr title="App\Livewire\Study\StudyPanel::loadNextItem">loadNextItem</abbr></a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Services/SrsService.php.html#31"><abbr title="App\Services\SrsService::review">review</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#26"><abbr title="App\Http\Controllers\Auth\GoogleController::callback">callback</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#82"><abbr title="App\Livewire\Study\StudyPanel::grade">grade</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#57"><abbr title="App\Livewire\Study\McqPanel::pick">pick</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#30"><abbr title="App\Http\Controllers\Api\StudyController::review">review</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#45"><abbr title="App\Livewire\Analytics\DecksOverview::render">render</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#110"><abbr title="App\Http\Controllers\Api\StudyController::generateMcq">generateMcq</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Livewire/Study/McqPanel.php.html#82"><abbr title="App\Livewire\Study\McqPanel::next">next</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Services/McqGeneratorService.php.html#12"><abbr title="App\Services\McqGeneratorService::generate">generate</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/Api/FlashcardController.php.html#67"><abbr title="App\Http\Controllers\Api\FlashcardController::update">update</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/StudyController.php.html#157"><abbr title="App\Http\Controllers\Api\StudyController::generateMatching">generateMatching</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/ProfileController.php.html#46"><abbr title="App\Http\Controllers\ProfileController::updateAvatar">updateAvatar</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#38"><abbr title="App\Livewire\Analytics\DeckAnalytics::compute">compute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Analytics/DecksOverview.php.html#34"><abbr title="App\Livewire\Analytics\DecksOverview::sort">sort</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#32"><abbr title="App\Livewire\Decks\DeckForm::save">save</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckShow.php.html#87"><abbr title="App\Livewire\Decks\DeckShow::deleteItem">deleteItem</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#30"><abbr title="App\Livewire\Items\FlashcardForm::mount">mount</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Livewire/Items/FlashcardForm.php.html#69"><abbr title="App\Livewire\Items\FlashcardForm::save">save</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/MatchingGeneratorService.php.html#11"><abbr title="App\Services\MatchingGeneratorService::generate">generate</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/Api/AuthController.php.html#12"><abbr title="App\Http\Controllers\Api\AuthController::login">login</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationNotificationController.php.html#14"><abbr title="App\Http\Controllers\Auth\EmailVerificationNotificationController::store">store</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/GoogleController.php.html#69"><abbr title="App\Http\Controllers\Auth\GoogleController::googleEmailVerified">googleEmailVerified</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#14"><abbr title="App\Http\Controllers\GeneratorController::mcq">mcq</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/GeneratorController.php.html#27"><abbr title="App\Http\Controllers\GeneratorController::matching">matching</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/ItemController.php.html#14"><abbr title="App\Http\Controllers\ItemController::index">index</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Livewire/Analytics/DeckAnalytics.php.html#28"><abbr title="App\Livewire\Analytics\DeckAnalytics::mount">mount</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Livewire/Decks/DeckForm.php.html#21"><abbr title="App\Livewire\Decks\DeckForm::mount">mount</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#61"><abbr title="App\Livewire\Study\StudyPanel::setMode">setMode</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#69"><abbr title="App\Livewire\Study\StudyPanel::setQueueMode">setQueueMode</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Livewire/Study/StudyPanel.php.html#109"><abbr title="App\Livewire\Study\StudyPanel::refreshCurrent">refreshCurrent</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#11"><abbr title="App\Policies\ItemPolicy::view">view</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#16"><abbr title="App\Policies\ItemPolicy::update">update</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Policies/ItemPolicy.php.html#21"><abbr title="App\Policies\ItemPolicy::delete">delete</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/AppServiceProvider.php.html#22"><abbr title="App\Providers\AppServiceProvider::boot">boot</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Http/Requests/Auth/LoginRequest.php.html#60"><abbr title="App\Http\Requests\Auth\LoginRequest::ensureIsNotRateLimited">ensureIsNotRateLimited</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/VerifyEmailController.php.html#15"><abbr title="App\Http\Controllers\Auth\VerifyEmailController::__invoke">__invoke</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/EmailVerificationPromptController.php.html#15"><abbr title="App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 11.0.11</a> using <a href="https://www.php.net/" target="_top">PHP 8.2.12</a> and <a href="https://phpunit.de/">PHPUnit 11.5.33</a> at Sat Oct 11 12:27:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([41,1,0,1,1,3,1,2,1,1,1,14], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([138,0,0,1,0,1,0,1,0,1,1,39], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[100,3,"<a href=\"Console\/Commands\/ScheduleDeckQuizzes.php.html#10\">App\\Console\\Commands\\ScheduleDeckQuizzes<\/a>"],[0,2,"<a href=\"Console\/Kernel.php.html#8\">App\\Console\\Kernel<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Api\/AnalyticsController.php.html#10\">App\\Http\\Controllers\\Api\\AnalyticsController<\/a>"],[0,4,"<a href=\"Http\/Controllers\/Api\/AuthController.php.html#9\">App\\Http\\Controllers\\Api\\AuthController<\/a>"],[48.38709677419355,6,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#10\">App\\Http\\Controllers\\Api\\DeckController<\/a>"],[40.54054054054054,7,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#11\">App\\Http\\Controllers\\Api\\FlashcardController<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Api\/GeneratorController.php.html#9\">App\\Http\\Controllers\\Api\\GeneratorController<\/a>"],[0,5,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#9\">App\\Http\\Controllers\\Api\\ItemController<\/a>"],[0,13,"<a href=\"Http\/Controllers\/StudyController.php.html#18\">App\\Http\\Controllers\\Api\\StudyController<\/a>"],[100,3,"<a href=\"Http\/Controllers\/Auth\/AuthenticatedSessionController.php.html#12\">App\\Http\\Controllers\\Auth\\AuthenticatedSessionController<\/a>"],[100,3,"<a href=\"Http\/Controllers\/Auth\/ConfirmablePasswordController.php.html#12\">App\\Http\\Controllers\\Auth\\ConfirmablePasswordController<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Auth\/EmailVerificationNotificationController.php.html#9\">App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController<\/a>"],[66.66666666666666,2,"<a href=\"Http\/Controllers\/Auth\/EmailVerificationPromptController.php.html#10\">App\\Http\\Controllers\\Auth\\EmailVerificationPromptController<\/a>"],[0,11,"<a href=\"Http\/Controllers\/Auth\/GoogleController.php.html#13\">App\\Http\\Controllers\\Auth\\GoogleController<\/a>"],[100,3,"<a href=\"Http\/Controllers\/Auth\/NewPasswordController.php.html#16\">App\\Http\\Controllers\\Auth\\NewPasswordController<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/PasswordController.php.html#11\">App\\Http\\Controllers\\Auth\\PasswordController<\/a>"],[100,3,"<a href=\"Http\/Controllers\/Auth\/PasswordResetLinkController.php.html#11\">App\\Http\\Controllers\\Auth\\PasswordResetLinkController<\/a>"],[100,2,"<a href=\"Http\/Controllers\/Auth\/RegisteredUserController.php.html#15\">App\\Http\\Controllers\\Auth\\RegisteredUserController<\/a>"],[80,3,"<a href=\"Http\/Controllers\/Auth\/VerifyEmailController.php.html#10\">App\\Http\\Controllers\\Auth\\VerifyEmailController<\/a>"],[100,0,"<a href=\"Http\/Controllers\/Controller.php.html#10\">App\\Http\\Controllers\\Controller<\/a>"],[6.666666666666667,2,"<a href=\"Http\/Controllers\/DashboardController.php.html#10\">App\\Http\\Controllers\\DashboardController<\/a>"],[0,6,"<a href=\"Http\/Controllers\/DeckController.php.html#9\">App\\Http\\Controllers\\DeckController<\/a>"],[0,4,"<a href=\"Http\/Controllers\/GeneratorController.php.html#12\">App\\Http\\Controllers\\GeneratorController<\/a>"],[0,7,"<a href=\"Http\/Controllers\/ItemController.php.html#12\">App\\Http\\Controllers\\ItemController<\/a>"],[30,7,"<a href=\"Http\/Controllers\/ProfileController.php.html#12\">App\\Http\\Controllers\\ProfileController<\/a>"],[65.21739130434783,7,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#12\">App\\Http\\Requests\\Auth\\LoginRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/ImportCsvRequest.php.html#7\">App\\Http\\Requests\\ImportCsvRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/ProfileAvatarRequest.php.html#7\">App\\Http\\Requests\\ProfileAvatarRequest<\/a>"],[0,3,"<a href=\"Http\/Requests\/ProfilePasswordRequest.php.html#7\">App\\Http\\Requests\\ProfilePasswordRequest<\/a>"],[100,1,"<a href=\"Http\/Requests\/ProfileUpdateRequest.php.html#9\">App\\Http\\Requests\\ProfileUpdateRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/ReviewRequest.php.html#7\">App\\Http\\Requests\\ReviewRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/StoreDeckRequest.php.html#7\">App\\Http\\Requests\\StoreDeckRequest<\/a>"],[0,3,"<a href=\"Http\/Requests\/StoreItemRequest.php.html#8\">App\\Http\\Requests\\StoreItemRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/UpdateDeckRequest.php.html#7\">App\\Http\\Requests\\UpdateDeckRequest<\/a>"],[0,2,"<a href=\"Http\/Requests\/UpdateItemRequest.php.html#8\">App\\Http\\Requests\\UpdateItemRequest<\/a>"],[0,6,"<a href=\"Livewire\/Analytics\/DeckAnalytics.php.html#12\">App\\Livewire\\Analytics\\DeckAnalytics<\/a>"],[0,9,"<a href=\"Livewire\/Analytics\/DecksOverview.php.html#12\">App\\Livewire\\Analytics\\DecksOverview<\/a>"],[0,1,"<a href=\"Livewire\/Cards\/CardEditor.php.html#7\">App\\Livewire\\Cards\\CardEditor<\/a>"],[0,6,"<a href=\"Livewire\/Decks\/DeckForm.php.html#11\">App\\Livewire\\Decks\\DeckForm<\/a>"],[0,4,"<a href=\"Livewire\/Decks\/DeckIndex.php.html#13\">App\\Livewire\\Decks\\DeckIndex<\/a>"],[0,13,"<a href=\"Livewire\/Decks\/DeckShow.php.html#12\">App\\Livewire\\Decks\\DeckShow<\/a>"],[0,8,"<a href=\"Livewire\/Items\/FlashcardForm.php.html#11\">App\\Livewire\\Items\\FlashcardForm<\/a>"],[0,1,"<a href=\"Livewire\/Items\/ItemForm.php.html#7\">App\\Livewire\\Items\\ItemForm<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqHistory.php.html#10\">App\\Livewire\\Study\\McqHistory<\/a>"],[0,3,"<a href=\"Livewire\/Study\/McqHome.php.html#14\">App\\Livewire\\Study\\McqHome<\/a>"],[0,13,"<a href=\"Livewire\/Study\/McqPanel.php.html#15\">App\\Livewire\\Study\\McqPanel<\/a>"],[0,32,"<a href=\"Livewire\/Study\/StudyPanel.php.html#14\">App\\Livewire\\Study\\StudyPanel<\/a>"],[25,4,"<a href=\"Models\/Deck.php.html#8\">App\\Models\\Deck<\/a>"],[50,2,"<a href=\"Models\/Item.php.html#8\">App\\Models\\Item<\/a>"],[0,3,"<a href=\"Models\/Quiz.php.html#9\">App\\Models\\Quiz<\/a>"],[0,2,"<a href=\"Models\/QuizResult.php.html#8\">App\\Models\\QuizResult<\/a>"],[0,2,"<a href=\"Models\/Review.php.html#8\">App\\Models\\Review<\/a>"],[0,3,"<a href=\"Models\/ReviewState.php.html#8\">App\\Models\\ReviewState<\/a>"],[100,1,"<a href=\"Models\/User.php.html#10\">App\\Models\\User<\/a>"],[75,4,"<a href=\"Policies\/DeckPolicy.php.html#8\">App\\Policies\\DeckPolicy<\/a>"],[0,7,"<a href=\"Policies\/ItemPolicy.php.html#9\">App\\Policies\\ItemPolicy<\/a>"],[0,2,"<a href=\"Policies\/ReviewStatePolicy.php.html#8\">App\\Policies\\ReviewStatePolicy<\/a>"],[45.45454545454545,4,"<a href=\"Providers\/AppServiceProvider.php.html#9\">App\\Providers\\AppServiceProvider<\/a>"],[100,1,"<a href=\"Providers\/AuthServiceProvider.php.html#11\">App\\Providers\\AuthServiceProvider<\/a>"],[100,1,"<a href=\"Providers\/DomainServiceProvider.php.html#7\">App\\Providers\\DomainServiceProvider<\/a>"],[100,2,"<a href=\"Providers\/ServicesServiceProvider.php.html#7\">App\\Providers\\ServicesServiceProvider<\/a>"],[0,3,"<a href=\"Services\/MatchingGeneratorService.php.html#9\">App\\Services\\MatchingGeneratorService<\/a>"],[0,4,"<a href=\"Services\/McqGeneratorService.php.html#10\">App\\Services\\McqGeneratorService<\/a>"],[97.36842105263158,13,"<a href=\"Services\/Quiz\/McqGenerator.php.html#9\">App\\Services\\Quiz\\McqGenerator<\/a>"],[0,11,"<a href=\"Services\/SrsService.php.html#9\">App\\Services\\SrsService<\/a>"],[0,1,"<a href=\"View\/Components\/AppLayout.php.html#8\">App\\View\\Components\\AppLayout<\/a>"],[100,1,"<a href=\"View\/Components\/GuestLayout.php.html#8\">App\\View\\Components\\GuestLayout<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,3,"<a href=\"Console\/Commands\/ScheduleDeckQuizzes.php.html#15\">App\\Console\\Commands\\ScheduleDeckQuizzes::handle<\/a>"],[0,1,"<a href=\"Console\/Kernel.php.html#10\">App\\Console\\Kernel::schedule<\/a>"],[0,1,"<a href=\"Console\/Kernel.php.html#19\">App\\Console\\Kernel::commands<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/AnalyticsController.php.html#15\">App\\Http\\Controllers\\Api\\AnalyticsController::deckAnalytics<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/AnalyticsController.php.html#38\">App\\Http\\Controllers\\Api\\AnalyticsController::overview<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Api\/AuthController.php.html#12\">App\\Http\\Controllers\\Api\\AuthController::login<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/AuthController.php.html#35\">App\\Http\\Controllers\\Api\\AuthController::logout<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/AuthController.php.html#42\">App\\Http\\Controllers\\Api\\AuthController::me<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#16\">App\\Http\\Controllers\\Api\\DeckController::index<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#30\">App\\Http\\Controllers\\Api\\DeckController::store<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#50\">App\\Http\\Controllers\\Api\\DeckController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#60\">App\\Http\\Controllers\\Api\\DeckController::update<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#78\">App\\Http\\Controllers\\Api\\DeckController::destroy<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/DeckController.php.html#90\">App\\Http\\Controllers\\Api\\DeckController::import<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#17\">App\\Http\\Controllers\\Api\\FlashcardController::index<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#34\">App\\Http\\Controllers\\Api\\FlashcardController::store<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#55\">App\\Http\\Controllers\\Api\\FlashcardController::show<\/a>"],[0,3,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#67\">App\\Http\\Controllers\\Api\\FlashcardController::update<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Api\/FlashcardController.php.html#90\">App\\Http\\Controllers\\Api\\FlashcardController::destroy<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/GeneratorController.php.html#14\">App\\Http\\Controllers\\Api\\GeneratorController::generateMcq<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/GeneratorController.php.html#27\">App\\Http\\Controllers\\Api\\GeneratorController::generateMatching<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#14\">App\\Http\\Controllers\\Api\\ItemController::index<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#22\">App\\Http\\Controllers\\Api\\ItemController::store<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#38\">App\\Http\\Controllers\\Api\\ItemController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#46\">App\\Http\\Controllers\\Api\\ItemController::update<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Api\/ItemController.php.html#61\">App\\Http\\Controllers\\Api\\ItemController::destroy<\/a>"],[0,1,"<a href=\"Http\/Controllers\/StudyController.php.html#20\">App\\Http\\Controllers\\Api\\StudyController::__construct<\/a>"],[0,5,"<a href=\"Http\/Controllers\/StudyController.php.html#30\">App\\Http\\Controllers\\Api\\StudyController::review<\/a>"],[0,4,"<a href=\"Http\/Controllers\/StudyController.php.html#110\">App\\Http\\Controllers\\Api\\StudyController::generateMcq<\/a>"],[0,3,"<a href=\"Http\/Controllers\/StudyController.php.html#157\">App\\Http\\Controllers\\Api\\StudyController::generateMatching<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/AuthenticatedSessionController.php.html#17\">App\\Http\\Controllers\\Auth\\AuthenticatedSessionController::create<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/AuthenticatedSessionController.php.html#25\">App\\Http\\Controllers\\Auth\\AuthenticatedSessionController::store<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/AuthenticatedSessionController.php.html#37\">App\\Http\\Controllers\\Auth\\AuthenticatedSessionController::destroy<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/ConfirmablePasswordController.php.html#17\">App\\Http\\Controllers\\Auth\\ConfirmablePasswordController::show<\/a>"],[100,2,"<a href=\"Http\/Controllers\/Auth\/ConfirmablePasswordController.php.html#25\">App\\Http\\Controllers\\Auth\\ConfirmablePasswordController::store<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Auth\/EmailVerificationNotificationController.php.html#14\">App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController::store<\/a>"],[66.66666666666666,2,"<a href=\"Http\/Controllers\/Auth\/EmailVerificationPromptController.php.html#15\">App\\Http\\Controllers\\Auth\\EmailVerificationPromptController::__invoke<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Auth\/GoogleController.php.html#15\">App\\Http\\Controllers\\Auth\\GoogleController::redirect<\/a>"],[0,8,"<a href=\"Http\/Controllers\/Auth\/GoogleController.php.html#26\">App\\Http\\Controllers\\Auth\\GoogleController::callback<\/a>"],[0,2,"<a href=\"Http\/Controllers\/Auth\/GoogleController.php.html#69\">App\\Http\\Controllers\\Auth\\GoogleController::googleEmailVerified<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/NewPasswordController.php.html#21\">App\\Http\\Controllers\\Auth\\NewPasswordController::create<\/a>"],[100,2,"<a href=\"Http\/Controllers\/Auth\/NewPasswordController.php.html#31\">App\\Http\\Controllers\\Auth\\NewPasswordController::store<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/PasswordController.php.html#16\">App\\Http\\Controllers\\Auth\\PasswordController::update<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/PasswordResetLinkController.php.html#16\">App\\Http\\Controllers\\Auth\\PasswordResetLinkController::create<\/a>"],[100,2,"<a href=\"Http\/Controllers\/Auth\/PasswordResetLinkController.php.html#26\">App\\Http\\Controllers\\Auth\\PasswordResetLinkController::store<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/RegisteredUserController.php.html#20\">App\\Http\\Controllers\\Auth\\RegisteredUserController::create<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/RegisteredUserController.php.html#30\">App\\Http\\Controllers\\Auth\\RegisteredUserController::store<\/a>"],[80,3,"<a href=\"Http\/Controllers\/Auth\/VerifyEmailController.php.html#15\">App\\Http\\Controllers\\Auth\\VerifyEmailController::__invoke<\/a>"],[100,1,"<a href=\"Http\/Controllers\/DashboardController.php.html#12\">App\\Http\\Controllers\\DashboardController::__construct<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DashboardController.php.html#17\">App\\Http\\Controllers\\DashboardController::__invoke<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#11\">App\\Http\\Controllers\\DeckController::__construct<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#15\">App\\Http\\Controllers\\DeckController::index<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#26\">App\\Http\\Controllers\\DeckController::store<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#37\">App\\Http\\Controllers\\DeckController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#45\">App\\Http\\Controllers\\DeckController::update<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DeckController.php.html#54\">App\\Http\\Controllers\\DeckController::destroy<\/a>"],[0,2,"<a href=\"Http\/Controllers\/GeneratorController.php.html#14\">App\\Http\\Controllers\\GeneratorController::mcq<\/a>"],[0,2,"<a href=\"Http\/Controllers\/GeneratorController.php.html#27\">App\\Http\\Controllers\\GeneratorController::matching<\/a>"],[0,2,"<a href=\"Http\/Controllers\/ItemController.php.html#14\">App\\Http\\Controllers\\ItemController::index<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ItemController.php.html#27\">App\\Http\\Controllers\\ItemController::store<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ItemController.php.html#40\">App\\Http\\Controllers\\ItemController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ItemController.php.html#46\">App\\Http\\Controllers\\ItemController::update<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ItemController.php.html#56\">App\\Http\\Controllers\\ItemController::destroy<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ItemController.php.html#66\">App\\Http\\Controllers\\ItemController::import<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ProfileController.php.html#14\">App\\Http\\Controllers\\ProfileController::__construct<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ProfileController.php.html#20\">App\\Http\\Controllers\\ProfileController::edit<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ProfileController.php.html#28\">App\\Http\\Controllers\\ProfileController::update<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ProfileController.php.html#35\">App\\Http\\Controllers\\ProfileController::updatePassword<\/a>"],[0,3,"<a href=\"Http\/Controllers\/ProfileController.php.html#46\">App\\Http\\Controllers\\ProfileController::updateAvatar<\/a>"],[100,1,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#17\">App\\Http\\Requests\\Auth\\LoginRequest::authorize<\/a>"],[100,1,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#27\">App\\Http\\Requests\\Auth\\LoginRequest::rules<\/a>"],[100,2,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#40\">App\\Http\\Requests\\Auth\\LoginRequest::authenticate<\/a>"],[20,2,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#60\">App\\Http\\Requests\\Auth\\LoginRequest::ensureIsNotRateLimited<\/a>"],[100,1,"<a href=\"Http\/Requests\/Auth\/LoginRequest.php.html#81\">App\\Http\\Requests\\Auth\\LoginRequest::throttleKey<\/a>"],[0,1,"<a href=\"Http\/Requests\/ImportCsvRequest.php.html#9\">App\\Http\\Requests\\ImportCsvRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/ImportCsvRequest.php.html#14\">App\\Http\\Requests\\ImportCsvRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/ProfileAvatarRequest.php.html#9\">App\\Http\\Requests\\ProfileAvatarRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/ProfileAvatarRequest.php.html#15\">App\\Http\\Requests\\ProfileAvatarRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/ProfilePasswordRequest.php.html#9\">App\\Http\\Requests\\ProfilePasswordRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/ProfilePasswordRequest.php.html#15\">App\\Http\\Requests\\ProfilePasswordRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/ProfilePasswordRequest.php.html#23\">App\\Http\\Requests\\ProfilePasswordRequest::messages<\/a>"],[100,1,"<a href=\"Http\/Requests\/ProfileUpdateRequest.php.html#16\">App\\Http\\Requests\\ProfileUpdateRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/ReviewRequest.php.html#9\">App\\Http\\Requests\\ReviewRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/ReviewRequest.php.html#14\">App\\Http\\Requests\\ReviewRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/StoreDeckRequest.php.html#9\">App\\Http\\Requests\\StoreDeckRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/StoreDeckRequest.php.html#14\">App\\Http\\Requests\\StoreDeckRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/StoreItemRequest.php.html#10\">App\\Http\\Requests\\StoreItemRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/StoreItemRequest.php.html#15\">App\\Http\\Requests\\StoreItemRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/StoreItemRequest.php.html#40\">App\\Http\\Requests\\StoreItemRequest::messages<\/a>"],[0,1,"<a href=\"Http\/Requests\/UpdateDeckRequest.php.html#9\">App\\Http\\Requests\\UpdateDeckRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UpdateDeckRequest.php.html#15\">App\\Http\\Requests\\UpdateDeckRequest::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/UpdateItemRequest.php.html#10\">App\\Http\\Requests\\UpdateItemRequest::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UpdateItemRequest.php.html#15\">App\\Http\\Requests\\UpdateItemRequest::rules<\/a>"],[0,2,"<a href=\"Livewire\/Analytics\/DeckAnalytics.php.html#28\">App\\Livewire\\Analytics\\DeckAnalytics::mount<\/a>"],[0,3,"<a href=\"Livewire\/Analytics\/DeckAnalytics.php.html#38\">App\\Livewire\\Analytics\\DeckAnalytics::compute<\/a>"],[0,1,"<a href=\"Livewire\/Analytics\/DeckAnalytics.php.html#83\">App\\Livewire\\Analytics\\DeckAnalytics::render<\/a>"],[0,1,"<a href=\"Livewire\/Analytics\/DecksOverview.php.html#29\">App\\Livewire\\Analytics\\DecksOverview::updatingSearch<\/a>"],[0,3,"<a href=\"Livewire\/Analytics\/DecksOverview.php.html#34\">App\\Livewire\\Analytics\\DecksOverview::sort<\/a>"],[0,5,"<a href=\"Livewire\/Analytics\/DecksOverview.php.html#45\">App\\Livewire\\Analytics\\DecksOverview::render<\/a>"],[0,1,"<a href=\"Livewire\/Cards\/CardEditor.php.html#9\">App\\Livewire\\Cards\\CardEditor::render<\/a>"],[0,2,"<a href=\"Livewire\/Decks\/DeckForm.php.html#21\">App\\Livewire\\Decks\\DeckForm::mount<\/a>"],[0,3,"<a href=\"Livewire\/Decks\/DeckForm.php.html#32\">App\\Livewire\\Decks\\DeckForm::save<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckForm.php.html#57\">App\\Livewire\\Decks\\DeckForm::render<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckIndex.php.html#25\">App\\Livewire\\Decks\\DeckIndex::updatingQ<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckIndex.php.html#31\">App\\Livewire\\Decks\\DeckIndex::createDeck<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckIndex.php.html#51\">App\\Livewire\\Decks\\DeckIndex::getDecksProperty<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckIndex.php.html#63\">App\\Livewire\\Decks\\DeckIndex::render<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#31\">App\\Livewire\\Decks\\DeckShow::mount<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#37\">App\\Livewire\\Decks\\DeckShow::getItemsProperty<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#42\">App\\Livewire\\Decks\\DeckShow::newFlashcard<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#47\">App\\Livewire\\Decks\\DeckShow::editDeck<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#52\">App\\Livewire\\Decks\\DeckShow::study<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#57\">App\\Livewire\\Decks\\DeckShow::analytics<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#63\">App\\Livewire\\Decks\\DeckShow::confirmDeleteDeck<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#69\">App\\Livewire\\Decks\\DeckShow::deleteDeck<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#80\">App\\Livewire\\Decks\\DeckShow::confirmDeleteItem<\/a>"],[0,3,"<a href=\"Livewire\/Decks\/DeckShow.php.html#87\">App\\Livewire\\Decks\\DeckShow::deleteItem<\/a>"],[0,1,"<a href=\"Livewire\/Decks\/DeckShow.php.html#107\">App\\Livewire\\Decks\\DeckShow::render<\/a>"],[0,3,"<a href=\"Livewire\/Items\/FlashcardForm.php.html#30\">App\\Livewire\\Items\\FlashcardForm::mount<\/a>"],[0,1,"<a href=\"Livewire\/Items\/FlashcardForm.php.html#60\">App\\Livewire\\Items\\FlashcardForm::rules<\/a>"],[0,3,"<a href=\"Livewire\/Items\/FlashcardForm.php.html#69\">App\\Livewire\\Items\\FlashcardForm::save<\/a>"],[0,1,"<a href=\"Livewire\/Items\/FlashcardForm.php.html#107\">App\\Livewire\\Items\\FlashcardForm::render<\/a>"],[0,1,"<a href=\"Livewire\/Items\/ItemForm.php.html#9\">App\\Livewire\\Items\\ItemForm::render<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqHistory.php.html#13\">App\\Livewire\\Study\\McqHistory::render<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqHome.php.html#27\">App\\Livewire\\Study\\McqHome::mount<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqHome.php.html#36\">App\\Livewire\\Study\\McqHome::start<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqHome.php.html#50\">App\\Livewire\\Study\\McqHome::render<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqPanel.php.html#36\">App\\Livewire\\Study\\McqPanel::mount<\/a>"],[0,6,"<a href=\"Livewire\/Study\/McqPanel.php.html#57\">App\\Livewire\\Study\\McqPanel::pick<\/a>"],[0,4,"<a href=\"Livewire\/Study\/McqPanel.php.html#82\">App\\Livewire\\Study\\McqPanel::next<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqPanel.php.html#95\">App\\Livewire\\Study\\McqPanel::restart<\/a>"],[0,1,"<a href=\"Livewire\/Study\/McqPanel.php.html#101\">App\\Livewire\\Study\\McqPanel::render<\/a>"],[0,1,"<a href=\"Livewire\/Study\/StudyPanel.php.html#46\">App\\Livewire\\Study\\StudyPanel::mount<\/a>"],[0,1,"<a href=\"Livewire\/Study\/StudyPanel.php.html#54\">App\\Livewire\\Study\\StudyPanel::render<\/a>"],[0,2,"<a href=\"Livewire\/Study\/StudyPanel.php.html#61\">App\\Livewire\\Study\\StudyPanel::setMode<\/a>"],[0,2,"<a href=\"Livewire\/Study\/StudyPanel.php.html#69\">App\\Livewire\\Study\\StudyPanel::setQueueMode<\/a>"],[0,8,"<a href=\"Livewire\/Study\/StudyPanel.php.html#82\">App\\Livewire\\Study\\StudyPanel::grade<\/a>"],[0,2,"<a href=\"Livewire\/Study\/StudyPanel.php.html#109\">App\\Livewire\\Study\\StudyPanel::refreshCurrent<\/a>"],[0,1,"<a href=\"Livewire\/Study\/StudyPanel.php.html#116\">App\\Livewire\\Study\\StudyPanel::nextCard<\/a>"],[0,1,"<a href=\"Livewire\/Study\/StudyPanel.php.html#124\">App\\Livewire\\Study\\StudyPanel::refreshCounts<\/a>"],[0,14,"<a href=\"Livewire\/Study\/StudyPanel.php.html#149\">App\\Livewire\\Study\\StudyPanel::loadNextItem<\/a>"],[0,1,"<a href=\"Models\/Deck.php.html#14\">App\\Models\\Deck::user<\/a>"],[0,1,"<a href=\"Models\/Deck.php.html#15\">App\\Models\\Deck::parent<\/a>"],[0,1,"<a href=\"Models\/Deck.php.html#16\">App\\Models\\Deck::children<\/a>"],[100,1,"<a href=\"Models\/Deck.php.html#17\">App\\Models\\Deck::items<\/a>"],[100,1,"<a href=\"Models\/Item.php.html#24\">App\\Models\\Item::deck<\/a>"],[0,1,"<a href=\"Models\/Item.php.html#29\">App\\Models\\Item::reviewStates<\/a>"],[0,1,"<a href=\"Models\/Quiz.php.html#14\">App\\Models\\Quiz::user<\/a>"],[0,1,"<a href=\"Models\/Quiz.php.html#15\">App\\Models\\Quiz::deck<\/a>"],[0,1,"<a href=\"Models\/Quiz.php.html#16\">App\\Models\\Quiz::results<\/a>"],[0,1,"<a href=\"Models\/QuizResult.php.html#14\">App\\Models\\QuizResult::quiz<\/a>"],[0,1,"<a href=\"Models\/QuizResult.php.html#15\">App\\Models\\QuizResult::item<\/a>"],[0,1,"<a href=\"Models\/Review.php.html#23\">App\\Models\\Review::user<\/a>"],[0,1,"<a href=\"Models\/Review.php.html#24\">App\\Models\\Review::item<\/a>"],[0,1,"<a href=\"Models\/ReviewState.php.html#39\">App\\Models\\ReviewState::item<\/a>"],[0,1,"<a href=\"Models\/ReviewState.php.html#40\">App\\Models\\ReviewState::user<\/a>"],[0,1,"<a href=\"Models\/ReviewState.php.html#43\">App\\Models\\ReviewState::scopeDue<\/a>"],[100,1,"<a href=\"Models\/User.php.html#41\">App\\Models\\User::casts<\/a>"],[0,1,"<a href=\"Policies\/DeckPolicy.php.html#12\">App\\Policies\\DeckPolicy::create<\/a>"],[100,1,"<a href=\"Policies\/DeckPolicy.php.html#19\">App\\Policies\\DeckPolicy::view<\/a>"],[100,1,"<a href=\"Policies\/DeckPolicy.php.html#24\">App\\Policies\\DeckPolicy::update<\/a>"],[100,1,"<a href=\"Policies\/DeckPolicy.php.html#29\">App\\Policies\\DeckPolicy::delete<\/a>"],[0,2,"<a href=\"Policies\/ItemPolicy.php.html#11\">App\\Policies\\ItemPolicy::view<\/a>"],[0,2,"<a href=\"Policies\/ItemPolicy.php.html#16\">App\\Policies\\ItemPolicy::update<\/a>"],[0,2,"<a href=\"Policies\/ItemPolicy.php.html#21\">App\\Policies\\ItemPolicy::delete<\/a>"],[0,1,"<a href=\"Policies\/ItemPolicy.php.html#27\">App\\Policies\\ItemPolicy::create<\/a>"],[0,1,"<a href=\"Policies\/ReviewStatePolicy.php.html#10\">App\\Policies\\ReviewStatePolicy::view<\/a>"],[0,1,"<a href=\"Policies\/ReviewStatePolicy.php.html#15\">App\\Policies\\ReviewStatePolicy::update<\/a>"],[100,1,"<a href=\"Providers\/AppServiceProvider.php.html#14\">App\\Providers\\AppServiceProvider::register<\/a>"],[40,3,"<a href=\"Providers\/AppServiceProvider.php.html#22\">App\\Providers\\AppServiceProvider::boot<\/a>"],[100,1,"<a href=\"Providers\/AuthServiceProvider.php.html#26\">App\\Providers\\AuthServiceProvider::boot<\/a>"],[100,1,"<a href=\"Providers\/DomainServiceProvider.php.html#9\">App\\Providers\\DomainServiceProvider::register<\/a>"],[100,1,"<a href=\"Providers\/ServicesServiceProvider.php.html#9\">App\\Providers\\ServicesServiceProvider::register<\/a>"],[100,1,"<a href=\"Providers\/ServicesServiceProvider.php.html#27\">App\\Providers\\ServicesServiceProvider::boot<\/a>"],[0,3,"<a href=\"Services\/MatchingGeneratorService.php.html#11\">App\\Services\\MatchingGeneratorService::generate<\/a>"],[0,4,"<a href=\"Services\/McqGeneratorService.php.html#12\">App\\Services\\McqGeneratorService::generate<\/a>"],[96.96969696969697,8,"<a href=\"Services\/Quiz\/McqGenerator.php.html#19\">App\\Services\\Quiz\\McqGenerator::make<\/a>"],[100,5,"<a href=\"Services\/Quiz\/McqGenerator.php.html#74\">App\\Services\\Quiz\\McqGenerator::pickDirection<\/a>"],[0,1,"<a href=\"Services\/SrsService.php.html#15\">App\\Services\\SrsService::init<\/a>"],[0,10,"<a href=\"Services\/SrsService.php.html#31\">App\\Services\\SrsService::review<\/a>"],[0,1,"<a href=\"View\/Components\/AppLayout.php.html#13\">App\\View\\Components\\AppLayout::render<\/a>"],[100,1,"<a href=\"View\/Components\/GuestLayout.php.html#13\">App\\View\\Components\\GuestLayout::render<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

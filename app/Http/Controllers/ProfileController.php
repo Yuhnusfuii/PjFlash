@@ -3,58 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\ProfilePasswordRequest;
+use App\Http\Requests\ProfileAvatarRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function __construct()
+    {
+        $this->middleware(['auth', 'verified']);
+    }
+
+    /** GET /profile */
+    public function edit(Request $request)
     {
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    /** PATCH /profile */
+    public function update(ProfileUpdateRequest $request)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $request->user()->update($request->validated());
+        return back()->with('status', 'Profile updated.');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    /** PATCH /profile/password */
+    public function updatePassword(ProfilePasswordRequest $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $user = $request->user();
+        $user->update([
+            'password' => Hash::make($request->validated()['password']),
         ]);
 
+        return back()->with('status', 'Password changed.');
+    }
+
+    /** POST /profile/avatar */
+    public function updateAvatar(ProfileAvatarRequest $request)
+    {
         $user = $request->user();
 
-        Auth::logout();
+        $file = $request->file('avatar');
+        $path = $file->store('avatars', 'public'); // storage/app/public/avatars/...
 
-        $user->delete();
+        // Nếu có avatar cũ, xoá file cũ (nếu tồn tại)
+        if ($user->avatar_path && Storage::disk('public')->exists($user->avatar_path)) {
+            Storage::disk('public')->delete($user->avatar_path);
+        }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $user->update([
+            'avatar_path' => $path, // cột string nullable trong bảng users
+        ]);
 
-        return Redirect::to('/');
+        return back()->with('status', 'Avatar updated.');
     }
 }

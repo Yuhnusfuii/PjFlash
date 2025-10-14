@@ -8,6 +8,9 @@ use App\Models\ReviewState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
+use App\Enums\ReviewRating;
+use App\Services\Contracts\SrsServiceInterface;
 
 class StudyController extends Controller
 {
@@ -27,59 +30,22 @@ class StudyController extends Controller
 
     public function review(Item $item, Request $request): JsonResponse
     {
-        // TODO: SRS real logic
-        return response()->json(['message' => 'Review accepted (stub).', 'item_id' => $item->id]);
-    }
+        $validated = $request->validate(['rating' => 'required|integer|min:0|max:5']);
 
-    public function generateMcq(Item $item, Request $request): JsonResponse
-    {
-        $data = $item->data ?? [];
+        /** @var SrsServiceInterface $srs */
+        $srs = App::make(SrsServiceInterface::class);
+        $user = $request->user();
 
-        if (!isset($data['mcq']) || !is_array($data['mcq'])) {
-            $question = $item->front ?: 'Question';
-            $answer   = $item->back  ?: 'Answer';
+        // map int -> enum ReviewRating (fix lỗi kiểu enum)
+        $rating = ReviewRating::tryFrom((int) $validated['rating']) ?? ReviewRating::AGAIN;
 
-            $data['mcq'] = [
-                'question'      => $question,
-                'options'       => [$answer, 'Distractor A', 'Distractor B', 'Distractor C'],
-                'answer_index'  => 0,
-            ];
-        }
-
-        $item->data = $data;
-        $item->save();
-
-        return response()->json(['message' => 'MCQ generated', 'item_id' => $item->id, 'mcq' => $item->data['mcq']]);
-    }
-
-    public function generateMatching(Item $item, Request $request): JsonResponse
-    {
-        $data = $item->data ?? [];
-
-        // TẠO PAYLOAD CHUẨN: mỗi cặp đều có 'left' & 'right' là STRING không rỗng
-        $pairs = [
-            ['left' => $item->front ?: 'Hello',  'right' => $item->back ?: 'Xin chào'],
-            ['left' => 'Cat',  'right' => 'Mèo'],
-            ['left' => 'Dog',  'right' => 'Chó'],
-            ['left' => 'Bird', 'right' => 'Chim'],
-        ];
-
-        // Lọc bảo đảm ổn định
-        $pairs = array_values(array_filter($pairs, function ($p) {
-            return isset($p['left'], $p['right'])
-                && is_string($p['left']) && is_string($p['right'])
-                && trim($p['left']) !== '' && trim($p['right']) !== '';
-        }));
-
-        $data['matching'] = ['pairs' => $pairs];
-
-        $item->data = $data;
-        $item->save();
+        $result = $srs->review($user, $item, $rating);
 
         return response()->json([
-            'message'  => 'Matching generated',
-            'item_id'  => $item->id,
-            'matching' => $item->data['matching'],
+            'message' => 'Review recorded',
+            'item_id' => $item->id,
+            'rating'  => $rating, // enum
+            'result'  => $result,
         ]);
     }
 }

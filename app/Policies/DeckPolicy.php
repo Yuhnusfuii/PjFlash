@@ -16,10 +16,15 @@ class DeckPolicy
         return true;
     }
 
-    public function view(User $user, Deck $deck): bool
+    public function view(User $user = null, Deck $deck): bool
     {
-        return $deck->user_id === $user->id;
+        // Chủ sở hữu hoặc deck public đều được xem
+        if ($user && $deck->user_id === $user->id) {
+            return true;
+        }
+        return (bool) $deck->is_public;
     }
+
 
     public function update(User $user, Deck $deck): bool
     {

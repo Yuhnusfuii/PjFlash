@@ -20,8 +20,8 @@ class StudyPanel extends Component
     public ?Item $current = null;
 
     // UI state
-    // CHỈ còn: 'auto' | 'flashcard' | 'mcq'  (đã loại 'matching')
-    public string $mode = 'auto';
+    // Study CHỈ còn Flashcard (SRS). Giữ 'auto' để không vỡ UI cũ nếu view còn nút.
+    public string $mode = 'flashcard';
     public bool $showAnswer = false;
 
     // Queue mode: 'due' | 'mix' | 'new'
@@ -60,9 +60,9 @@ class StudyPanel extends Component
 
     public function setMode(string $mode): void
     {
-        // CHỈ cho phép 3 mode; nếu view cũ còn nút Matching, nhấn vào cũng sẽ bị ép về 'auto'
-        $allowed = ['auto', 'flashcard', 'mcq'];
-        $this->mode = in_array($mode, $allowed, true) ? $mode : 'auto';
+        // CHỈ cho phép 'flashcard' và 'auto' (ép mọi giá trị khác về 'flashcard')
+        $allowed = ['auto', 'flashcard'];
+        $this->mode = in_array($mode, $allowed, true) ? $mode : 'flashcard';
         $this->showAnswer = false;
     }
 
@@ -75,9 +75,8 @@ class StudyPanel extends Component
     }
 
     /**
-     * Nhận điểm từ UI và cập nhật SRS:
-     * - Flashcard: 0=Again, 1=Hard, 2=Good, 3+=Easy
-     * - MCQ: view gửi 5 (đúng) hoặc 1 (sai) → map tương ứng
+     * Nhận điểm từ UI và cập nhật SRS (Study chỉ Flashcard):
+     * Map phím/nút UI về enum ReviewRating.
      */
     public function grade(int $rating, int $durationMs = 0): void
     {
@@ -105,7 +104,7 @@ class StudyPanel extends Component
         $this->loadNextItem();
     }
 
-    /** View muốn reload item hiện tại */
+    /** View muốn reload item hiện tại (an toàn giữ lại) */
     public function refreshCurrent(): void
     {
         if ($this->current) {
@@ -142,8 +141,8 @@ class StudyPanel extends Component
 
     /**
      * Logic lấy thẻ theo queue mode:
-     *  - 'due' : chỉ lấy thẻ DUE; nếu không còn → kết thúc phiên
-     *  - 'new' : chỉ lấy thẻ NEW; tôn trọng maxNewPerSession; nếu hết → kết thúc phiên
+     *  - 'due' : chỉ DUE; nếu không còn → kết thúc phiên
+     *  - 'new' : chỉ NEW; tôn trọng maxNewPerSession; nếu hết → kết thúc phiên
      *  - 'mix' : ưu tiên DUE → NEW (tôn trọng giới hạn) → next soon
      */
     protected function loadNextItem(): void
