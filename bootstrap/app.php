@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-
+use Symfony\Component\HttpFoundation\Request;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -17,6 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('api', [
             EnsureFrontendRequestsAreStateful::class,
         ]);
+        $middleware->trustProxies(
+            at: '*',
+                        headers:
+                Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
