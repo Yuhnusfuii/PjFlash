@@ -26,7 +26,7 @@ class ExploreDecks extends Component
 
     public function render()
     {
-        return view('livewire.explore.explore-decks', [
+        return view('livewire.Explore.explore-decks', [
             'decks' => $this->decks,
         ]);
     }
