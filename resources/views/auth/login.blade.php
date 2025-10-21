@@ -1,47 +1,49 @@
 <x-guest-layout>
-  <div class="container-app py-10">
-    <div class="max-w-md mx-auto card fade-in">
-      <div class="card-body">
-        <h1 class="text-xl font-semibold mb-4">Đăng nhập</h1>
+    <h1 class="text-2xl font-semibold mb-6 text-center">Đăng nhập</h1>
 
-        {{-- form gốc của Breeze giữ nguyên, chỉ thêm class .input/.btn --}}
-        <form method="POST" action="{{ route('login') }}" class="space-y-4">
-          @csrf
-          @if (Route::has('oauth.google.redirect'))
-          <div class="mt-4">
-            <a href="{{ route('oauth.google.redirect') }}" class="btn-outline w-full text-center">
-              Sign in with Google
-            </a>
-          </div>
-          @endif
-          <div>
-            <label class="label" for="email">Email</label>
-            <x-text-input id="email" class="input" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-          </div>
+    @if (session('status'))
+        <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-700">
+            {{ session('status') }}
+        </div>
+    @endif
 
-          <div>
-            <label class="label" for="password">Mật khẩu</label>
-            <x-text-input id="password" class="input" type="password" name="password" required autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-          </div>
+    <form method="POST" action="{{ route('login') }}" class="space-y-4">
+        @csrf
 
-          <div class="flex items-center justify-between">
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" name="remember" class="rounded border-slate-300 dark:border-slate-600">
-              <span class="text-sm">Ghi nhớ</span>
+        <div>
+            <label class="block text-sm mb-1">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" autofocus
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500" />
+            @error('email') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Mật khẩu</label>
+            <input id="password" type="password" name="password" autocomplete="current-password"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500" />
+            @error('password') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="flex items-center justify-between">
+            <label class="inline-flex items-center gap-2 text-sm">
+                <input type="checkbox" name="remember" class="rounded border-slate-300 dark:border-slate-600">
+                Ghi nhớ
             </label>
+            <a href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Quên mật khẩu?</a>
+        </div>
 
-            <a class="text-sm text-brand hover:underline" href="{{ route('password.request') }}">Quên mật khẩu?</a>
-          </div>
+        <button class="btn btn-primary w-full">Đăng nhập</button>
+    </form>
 
-          <button class="btn w-full">Đăng nhập</button>
-
-          <div class="mt-4">
-            <a href="{{ route('oauth.google.redirect') }}" class="btn-outline w-full text-center">Sign in with Google</a>
-          </div>
-        </form>
-      </div>
+    <div class="mt-4">
+        <a href="{{ url('auth/google/redirect') }}" class="btn btn-outline w-full">
+            <svg class="mr-2" width="18" height="18" viewBox="0 0 533.5 544.3"><path fill="#4285f4" d="M533.5 278.4..."/></svg>
+            Sign in with Google
+        </a>
     </div>
-  </div>
+
+    <p class="mt-6 text-center text-sm text-slate-500">
+        Chưa có tài khoản?
+        <a href="{{ route('register') }}" class="text-sky-600 font-medium hover:underline">Đăng ký</a>
+    </p>
 </x-guest-layout>

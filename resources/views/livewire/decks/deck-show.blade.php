@@ -1,177 +1,210 @@
-@push('head')
-<style>
-/* ===== Flip Card (3D) – đẹp, mượt ===== */
-.card3d { perspective: 1200px; height: 12rem; }
-.card3d-inner {
-  position: relative; width: 100%; height: 100%;
-  transform-style: preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.2,1);
-}
-.card3d.is-flipped .card3d-inner { transform: rotateY(180deg); }
+{{-- resources/views/livewire/decks/deck-show.blade.php --}}
 
-.card3d-face {
-  position: absolute; inset: 0; backface-visibility: hidden;
-  border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
-  border: 1px solid rgba(148,163,184,.35);
-  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
-  box-shadow: 0 8px 20px rgba(2,6,23,.06);
-}
-.dark .card3d-face {
-  background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(15,23,42,.82));
-  border-color: rgba(51,65,85,.6);
-  box-shadow: 0 8px 24px rgba(0,0,0,.35);
-}
-.card3d-back { transform: rotateY(180deg); }
+<div class="space-y-6">
 
-.card3d-label { font-size:.70rem; letter-spacing:.04em; color:#64748b; }
-.dark .card3d-label { color:#94a3b8; }
-
-.card-title { font-weight: 600; line-height: 1.35; }
-.card-answer { color:#047857; }             /* emerald-700 */
-.dark .card-answer { color:#34d399; }        /* emerald-400 */
-
-.card3d-cta { opacity:0; transform: translateY(4px); transition: all .25s ease; font-size: .75rem; color:#64748b; }
-.card3d:hover .card3d-cta { opacity:1; transform:none; }
-
-.card3d-actions { position:absolute; top:10px; right:10px; display:flex; gap:.4rem; }
-</style>
-@endpush
-
-<div class="max-w-6xl p-6 mx-auto space-y-6"
-     x-data="{
-        showItemModal: @entangle('showItemModal').live,
-        showDeckModal: @entangle('showDeckModal').live
-     }"
-     @keydown.escape.window="
-        if (showItemModal) showItemModal = false;
-        if (showDeckModal) showDeckModal = false;
-     ">
-
-    {{-- Flash --}}
-    @if (session('success'))
-        <div class="p-3 text-green-800 bg-green-100 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- Header --}}
-    <div class="flex items-start justify-between gap-4">
+    {{-- HEADER --}}
+    <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-semibold">{{ $deck->name }}</h1>
-            @if(!empty($deck->description))
-                <p class="mt-1 text-sm text-gray-600">{{ $deck->description }}</p>
+            @if($deck->description)
+                <p class="text-slate-500 dark:text-slate-400 mt-1">{{ $deck->description }}</p>
             @endif
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
-            <a href="{{ route('decks.study', ['deck' => $deck->id]) }}" class="px-3 py-2 border rounded hover:bg-gray-50">Study</a>
-            <a href="{{ route('decks.analytics', ['deck' => $deck->id]) }}" class="px-3 py-2 border rounded hover:bg-gray-50">Analytics</a>
-            <a href="{{ route('decks.edit', ['deck' => $deck->id]) }}" class="px-3 py-2 border rounded hover:bg-gray-50">Edit Deck</a>
-            <a href="{{ route('flashcards.create', ['deckId' => $deck->id]) }}" class="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">+ New Flashcard</a>
-            <button wire:click="confirmDeleteDeck" class="px-3 py-2 text-white bg-red-600 rounded hover:bg-red-700">Delete Deck</button>
+        <div class="flex gap-2">
+            <a href="{{ route('decks.study', $deck) }}" class="btn btn-outline">Study</a>
+            <a href="{{ route('decks.analytics', $deck) }}" class="btn btn-outline">Analytics</a>
+            <a href="{{ route('decks.edit', $deck) }}" class="btn btn-outline">Edit Deck</a>
+            <a href="{{ route('flashcards.create', $deck->id) }}" class="btn btn-success">+ New Flashcard</a>
+            <button type="button" class="btn btn-danger"
+                    wire:click="deleteDeck"
+                    onclick="event.stopPropagation()">
+                Delete Deck
+            </button>
         </div>
     </div>
 
-    <div class="text-sm text-gray-600">
-        Showing {{ $items->firstItem() ?? 0 }}–{{ $items->lastItem() ?? 0 }} of {{ $items->total() }}
+    {{-- INFO LINE --}}
+    <div class="y-card p-4 text-sm text-slate-600 dark:text-slate-300 flex items-center gap-3">
+        <div><span class="font-semibold">{{ $items->total() }}</span> items</div>
+        <div class="hidden md:block h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
+        <div class="flex-1">Click vào thẻ để lật • Nhấn <kbd class="kbd">Enter</kbd> / <kbd class="kbd">Space</kbd> cũng được.</div>
     </div>
 
-    {{-- GRID + FLIP --}}
+    {{-- GRID OF CARDS --}}
+    @if($items->count() === 0)
+        <div class="y-card p-6 text-slate-500 dark:text-slate-400">
+            Chưa có flashcard nào. Hãy thêm thẻ với nút <strong>+ New Flashcard</strong>.
+        </div>
+    @else
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        @forelse ($items as $it)
-            <div class="card3d group"
-                 x-data="{ flipped:false }"
-                 :class="flipped ? 'is-flipped' : ''"
-                 role="button" tabindex="0"
-                 @click="flipped = !flipped"
-                 @keydown.enter.prevent="flipped = !flipped"
-                 @keydown.space.prevent="flipped = !flipped">
+        @foreach ($items as $item)
+        <div class="fc y-card p-0" tabindex="0">
+            <div class="fc-inner">
 
-                <div class="card3d-inner">
-                    {{-- FRONT --}}
-                    <div class="card3d-face">
-                        <div class="card3d-actions" @click.stop>
-                            <a href="{{ route('flashcards.edit', ['deckId' => $deck->id, 'itemId' => $it->id]) }}"
-                               class="px-2 py-1 text-xs border rounded bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800">Edit</a>
-                            <button class="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
-                                    wire:click="confirmDeleteItem({{ $it->id }})">Delete</button>
+                {{-- FRONT --}}
+                <div class="fc-face front">
+                    <span class="fc-badge">Front</span>
+
+                    <div class="fc-title">{{ $item->front }}</div>
+
+                    <div class="fc-actions">
+                        <span>Click để lật • Enter / Space</span>
+                        <div class="ml-auto flex gap-2 fc-actions">
+                            <a href="{{ route('flashcards.edit', [$deck->id, $item->id]) }}"
+                               class="btn btn-outline"
+                               onclick="event.stopPropagation()">Edit</a>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    onclick="event.stopPropagation(); @this.call('confirmDelete', {{ $item->id }})">
+                                Delete
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="flipCard(this)">Flip</button>
                         </div>
-
-                        <span class="card3d-label">Front</span>
-                        <div class="card-title">
-                            {{ $it->front ?? data_get($it, 'data.front') ?? '—' }}
-                        </div>
-
-                        <div class="mt-auto card3d-cta">Click to flip</div>
-                    </div>
-
-                    {{-- BACK --}}
-                    <div class="card3d-face card3d-back">
-                        <div class="card3d-actions" @click.stop>
-                            <a href="{{ route('flashcards.edit', ['deckId' => $deck->id, 'itemId' => $it->id]) }}"
-                               class="px-2 py-1 text-xs border rounded bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800">Edit</a>
-                            <button class="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
-                                    wire:click="confirmDeleteItem({{ $it->id }})">Delete</button>
-                        </div>
-
-                        <span class="card3d-label">Back</span>
-                        <div class="card-title card-answer">
-                            {{ $it->back ?? data_get($it, 'data.back') ?? '—' }}
-                        </div>
-
-                        <div class="mt-auto card3d-cta">Click to flip back</div>
                     </div>
                 </div>
+
+                {{-- BACK --}}
+                <div class="fc-face back">
+                    <span class="fc-badge fc-back">Back</span>
+
+                    <div class="fc-body">{!! nl2br(e($item->back)) !!}</div>
+
+                    <div class="fc-actions">
+                        <span>Click để lật lại • Enter / Space</span>
+                        <div class="ml-auto flex gap-2 fc-actions">
+                            <a href="{{ route('flashcards.edit', [$deck->id, $item->id]) }}"
+                               class="btn btn-outline"
+                               onclick="event.stopPropagation()">Edit</a>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    onclick="event.stopPropagation(); @this.call('confirmDelete', {{ $item->id }})">
+                                Delete
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="flipCard(this)">Flip</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        @empty
-            <div class="text-gray-600">No flashcards yet. Create the first one!</div>
-        @endforelse
+        </div>
+        @endforeach
     </div>
 
-    @if($items->hasPages())
-        <div class="pt-2">
-            {{ $items->links() }}
-        </div>
+    {{-- PAGINATION --}}
+    <div class="mt-4">
+        {{ $items->links() }}
+    </div>
     @endif
-
-    {{-- MODAL: Delete Item --}}
-    <div x-show="showItemModal" x-cloak
-         class="fixed inset-0 z-50 flex items-center justify-center"
-         x-transition.opacity>
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showItemModal=false"></div>
-        <div class="relative w-full max-w-sm p-6 bg-white shadow-xl dark:bg-slate-900 rounded-2xl ring-1 ring-gray-200 dark:ring-slate-700"
-             x-transition.scale.origin.center>
-            <div class="flex items-start gap-3">
-                <div class="flex items-center justify-center w-10 h-10 bg-red-100 rounded-full shrink-0">🗑️</div>
-                <div>
-                    <h2 class="text-lg font-semibold">Delete flashcard?</h2>
-                    <p class="mt-1 text-gray-600">This action cannot be undone.</p>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button @click="showItemModal=false" class="px-4 py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800">Cancel</button>
-                <button wire:click="deleteItem" class="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- MODAL: Delete Deck --}}
-    <div x-show="showDeckModal" x-cloak
-         class="fixed inset-0 z-50 flex items-center justify-center"
-         x-transition.opacity>
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showDeckModal=false"></div>
-        <div class="relative w-full max-w-sm p-6 bg-white shadow-xl dark:bg-slate-900 rounded-2xl ring-1 ring-gray-200 dark:ring-slate-700"
-             x-transition.scale.origin.center>
-            <div class="flex items-start gap-3">
-                <div class="flex items-center justify-center w-10 h-10 bg-red-100 rounded-full shrink-0">⚠️</div>
-                <div>
-                    <h2 class="text-lg font-semibold">Delete deck?</h2>
-                    <p class="mt-1 text-gray-600">This will permanently delete the deck and its flashcards.</p>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button @click="showDeckModal=false" class="px-4 py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800">Cancel</button>
-                <button wire:click="deleteDeck" class="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-        </div>
-    </div>
 </div>
+
+@push('head')
+<style>
+  /* ===== Utilities ===== */
+  :root{ --card-bg:#fff; --card-br:#e2e8f0 }
+  .dark :root, .dark{ --card-bg:#0f172a; --card-br:#334155 }
+
+  .y-card{ border-radius:18px; background:var(--card-bg); border:1px solid var(--card-br); }
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem .9rem;border-radius:9999px;font-weight:600}
+  .btn-outline{border:1px solid #cbd5e1}
+  .btn-danger{background:#ef4444;color:#fff}
+  .btn-success{background:#10b981;color:#fff}
+
+  .kbd{padding:.15rem .35rem;border-radius:.375rem;border:1px solid #cbd5e1;background:#f8fafc}
+  .dark .kbd{border-color:#334155;background:#0b1220}
+
+  /* ===== FLIP CARD ===== */
+  .fc { perspective: 1200px; outline: none; }
+  .fc-inner{
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1);
+    will-change: transform;
+  }
+  .fc.is-flipped .fc-inner{ transform: rotateY(180deg); }
+
+  .fc-face{
+    position:absolute; inset:0;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--card-br);
+    background: var(--card-bg);
+    padding: 16px;
+    display:flex; flex-direction:column;
+    gap:.75rem;
+    min-height: 190px;
+    user-select: none;
+  }
+  .fc-face.back{ transform: rotateY(180deg); }
+
+  @media(hover:hover){
+    .fc:not(.is-flipped) .fc-face.front:hover{
+      box-shadow: 0 6px 22px -6px rgba(2,6,23,.22);
+      cursor: pointer;
+    }
+  }
+
+  .fc-badge{
+    align-self: flex-start;
+    font-size:.72rem; line-height:1;
+    padding:.35rem .55rem;
+    border-radius: 9999px;
+    border:1px solid #bae6fd;
+    background:#e7f5ff;
+    color:#0284c7;
+  }
+  .dark .fc-badge{
+    background:#071927; border-color:#1f3b52; color:#7dd3fc;
+  }
+  .fc-badge.fc-back{
+    border-color:#bbf7d0; background:#ecfdf5; color:#059669;
+  }
+  .dark .fc-badge.fc-back{
+    background:#062016; border-color:#14532d; color:#86efac;
+  }
+
+  .fc-title{ font-weight:700; font-size:1.05rem; }
+  .fc-body{ font-size:.975rem; color:#0f172a }
+  .dark .fc-body{ color:#e2e8f0 }
+
+  .fc-face > *{ pointer-events:none; }           /* tránh click text làm lật nhầm */
+  .fc-actions, .fc-actions *{ pointer-events:auto; }
+
+  .fc-actions{
+    margin-top:auto;
+    display:flex; align-items:center; gap:.5rem;
+    font-size:.84rem; color:#64748b;
+  }
+  .dark .fc-actions{ color:#94a3b8 }
+
+  .fc:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,.35); border-radius:16px; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+  // Flip khi click vào card (ngoài vùng nút)
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('.fc');
+    if (!card) return;
+    if (e.target.closest('.fc-actions')) return; // click vào nút => bỏ
+    card.classList.toggle('is-flipped');
+  });
+
+  // Flip khi Enter / Space (khi card đang focus)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ' && e.code !== 'Space') return;
+    const card = document.activeElement?.closest?.('.fc');
+    if (!card) return;
+    e.preventDefault();
+    card.classList.toggle('is-flipped');
+  });
+
+  // Flip bằng nút "Flip"
+  window.flipCard = (btn) => {
+    const card = btn.closest('.fc');
+    if (card) card.classList.toggle('is-flipped');
+  };
+</script>
+@endpush

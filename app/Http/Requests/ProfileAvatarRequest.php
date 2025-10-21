@@ -1,21 +1,21 @@
 <?php
 
 namespace App\Http\Requests;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProfileAvatarRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Sạch IDE & đúng chuẩn FormRequest
-        return $this->user() !== null;
+        return Auth::check();
     }
 
     public function rules(): array
     {
+        // 2MB = 2048 KB
         return [
-            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // 2MB
+            'avatar' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }
