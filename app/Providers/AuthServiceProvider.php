@@ -18,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Deck::class => DeckPolicy::class,
         Item::class => ItemPolicy::class,
+        \App\Models\Item::class => \App\Policies\ItemPolicy::class,
     ];
 
     /**

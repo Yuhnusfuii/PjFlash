@@ -22,7 +22,7 @@ class McqHome extends Component
 
     public ?int $deckId = null;
 
-    /** Start theo deck đã chọn bằng radio (vẫn giữ để tương thích) */
+    /** Start theo deck đã chọn bằng radio (giữ tương thích) */
     public function start()
     {
         abort_unless($this->deckId, 404);
@@ -38,8 +38,19 @@ class McqHome extends Component
 
         $this->authorize('view', $deck);
 
+        // Đi làm MCQ theo 1 deck
         return $this->redirectRoute('decks.mcq', [
             'deck' => $deck->id,
+            'mode' => $this->mode,
+            'n'    => $this->num, // bạn đang dùng 'n' trong route
+        ], navigate: true);
+    }
+
+    /** 🔥 Global quiz: tất cả deck của user */
+    public function startGlobal()
+    {
+        // Không cần deckId — chuyển thẳng tới trang Global
+        return $this->redirectRoute('mcq.all', [
             'mode' => $this->mode,
             'n'    => $this->num,
         ], navigate: true);

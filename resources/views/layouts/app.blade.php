@@ -66,6 +66,7 @@
       display:inline-flex; align-items:center; justify-content:center;
       gap:.5rem; padding:.6rem 1rem; border-radius: 9999px;
       font-weight: 600; transition: all .15s ease;
+      border: 1px solid transparent;
     }
     .y-btn--brand{ background: var(--brand); color:#fff; }
     .y-btn--brand:hover{ background: var(--brand-600); }
@@ -89,26 +90,66 @@
     .animate-slideIn{ animation: slideIn .2s ease; }
     @media (min-width:768px){ #__mb_ov{ display:none !important } }
 
-    /* Card chuẩn */
-    .ui-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; }
-    .dark .ui-card { background:#0f172a; border-color:#334155; }
+    /* === Legacy compatibility: map class cũ -> style mới (giữ nguyên hành vi cũ) === */
 
-    /* “Tabs” bo tròn phía trên nhưng vẽ BÊN TRONG card => không chồng lên hàng khác */
-    .stacked { position: relative; padding-top: 18px; isolation: isolate; }
-    .stacked::before, .stacked::after{
-      content:""; position:absolute; left:10px; right:10px; height:12px;
-      border:1px solid #e2e8f0; border-bottom:none; border-radius:12px 12px 0 0;
-      pointer-events:none; background: transparent;
+    /* Buttons */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:.5rem; padding:.6rem 1rem; border-radius:9999px;
+      font-weight:600; transition:all .15s ease;
+      background:var(--card-bg); color:var(--text); border:1px solid var(--card-br);
     }
-    .stacked::before{ top:4px; }
-    .stacked::after { top:10px; opacity:.7; }
-    .dark .stacked::before, .dark .stacked::after { border-color:#334155; }
+    .btn:hover{ filter:brightness(0.98) }
+    .btn:disabled{ opacity:.6; cursor:not-allowed }
 
-    /* Nút tiện dụng (dùng @apply từ CDN chỉ để đọc – khi build hãy đưa vào CSS) */
-    .btn-primary { @apply inline-flex items-center justify-center px-4 h-10 rounded-2xl bg-emerald-500 text-white hover:bg-emerald-600 transition; }
-    .btn-secondary { @apply inline-flex items-center justify-center px-3 h-10 rounded-2xl border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition; }
-    .btn-danger { @apply inline-flex items-center justify-center px-3 h-10 rounded-2xl bg-rose-500 text-white hover:bg-rose-600 transition; }
-    .pill { @apply inline-flex items-center justify-center px-2.5 h-6 rounded-full text-xs border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900; }
+    .btn-primary, .btn-success, .y-btn--brand{
+      background:var(--brand); color:#fff; border-color:transparent;
+    }
+    .btn-primary:hover, .btn-success:hover, .y-btn--brand:hover{
+      background:var(--brand-600);
+    }
+
+    .btn-outline{
+      background:var(--card-bg); color:var(--text);
+      border:1px solid var(--card-br);
+    }
+    .btn-danger{
+      background:#ef4444; color:#fff; border-color:transparent;
+    }
+    .btn-danger:hover{ filter:brightness(0.95) }
+
+    /* Inputs / Selects */
+    .input, .select{
+      width:100%; border-radius:12px; border:1px solid var(--card-br);
+      background:var(--card-bg); color:var(--text);
+      padding:.6rem .85rem; outline:none;
+    }
+    .input:focus, .select:focus{ box-shadow:0 0 0 3px rgba(16,185,129,.2) }
+
+    /* Cards */
+    .card, .ui-card{
+      background:var(--card-bg);
+      border:1px solid var(--card-br);
+      border-radius:16px;
+    }
+    .card-body{ padding:1rem }
+    @media(min-width:768px){ .card-body{ padding:1.25rem } }
+
+    /* Chips/Badges (legacy) */
+    .badge{
+      display:inline-flex; align-items:center; height:1.5rem;
+      padding:0 .6rem; border-radius:9999px; font-size:.75rem;
+      border:1px solid var(--card-br); background:var(--card-bg); color:var(--text-dim);
+    }
+
+    /* Radios/checkbox */
+    input[type="radio"], input[type="checkbox"]{
+      accent-color: var(--brand);
+    }
+
+    /* Link button look (legacy) */
+    .link-btn{ color:#64748b }
+    .link-btn:hover{ text-decoration:underline }
   </style>
 
   @stack('head')
@@ -186,10 +227,17 @@
 
       document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePanel(); });
 
+      // View fade-in
       const view = document.getElementById('view');
       if(view){ view.style.opacity=0; view.style.transform='translateY(8px)';
         requestAnimationFrame(()=>{ view.style.opacity=1; view.style.transform='none'; });
       }
+
+      // Force-hide overlay on load to tránh chặn click khi mới vào trang
+      document.addEventListener('DOMContentLoaded', ()=> {
+        const ov = document.getElementById(overlayId);
+        if (ov) ov.classList.add('hidden');
+      });
     })();
   </script>
 

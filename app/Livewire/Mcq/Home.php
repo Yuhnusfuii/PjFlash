@@ -21,7 +21,14 @@ class Home extends Component
 
     public function updatedDeckId(): void
     {
-        // no-op, chỉ để binding
+        // no-op
+    }
+
+    // ✅ Cho phép đi thẳng bằng nút: wire:click="startDeck({{ $deck->id }})"
+    public function startDeck(int $id)
+    {
+        $this->deckId = $id;
+        return $this->start();
     }
 
     public function start(): \Symfony\Component\HttpFoundation\Response

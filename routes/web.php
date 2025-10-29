@@ -3,24 +3,32 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 
+use App\Models\Deck;
+
+use App\Livewire\Explore\ExploreDecks;
+use App\Livewire\Explore\PublicDeckShow;
+
 use App\Livewire\Decks\DeckIndex;
 use App\Livewire\Decks\DeckShow;
 use App\Livewire\Decks\DeckForm;
-use App\Livewire\Study\StudyPanel;
-use App\Livewire\Analytics\DeckAnalytics;
-use App\Livewire\Analytics\DecksOverview;
+
 use App\Livewire\Items\FlashcardForm;
+
+use App\Livewire\Study\StudyPanel;
+use App\Livewire\Study\StudyAllPanel;   // Study All
 use App\Livewire\Study\McqHome;
 use App\Livewire\Study\McqPanel;
 use App\Livewire\Study\McqHistory;
 use App\Livewire\Study\McqAllPanel;
-use App\Models\Deck;
-use App\Livewire\Explore\ExploreDecks;
-use App\Livewire\Explore\PublicDeckShow;
+
+use App\Livewire\Analytics\DeckAnalytics;
+use App\Livewire\Analytics\DecksOverview;
+use App\Livewire\Decks\DeckCreateForm;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,65 +38,83 @@ use App\Livewire\Explore\PublicDeckShow;
 
 Route::view('/', 'home')->name('home');
 
-// OAuth
+/* OAuth */
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect'])->name('oauth.google.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'callback'])->name('oauth.google.callback');
 
-// Logout (Breeze)
+/* Logout (Breeze) */
 Route::post('/logout', function (Request $request) {
     Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     return redirect()->route('login');
 })->name('logout');
+
+/* Explore (public) */
 Route::get('/explore', ExploreDecks::class)->name('explore.index');
 Route::get('/p/{slug}', PublicDeckShow::class)->name('explore.show');
-// 🔒 App
+
+/* 🔒 App */
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
+
+    /* Dashboard */
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    // Aliases giữ tương thích
+    /* Aliases giữ tương thích */
     Route::get('/items', fn () => redirect()->route('decks.index'))->name('items.index');
+
+    /* ===== Study (ALL) đặt TRƯỚC alias /study/{deck} ===== */
+    Route::get('/study/all', StudyAllPanel::class)->name('study.all');
+
+    /* Alias cũ: /study/{deck} -> redirect về /decks/{deck}/study (ràng buộc số) */
     Route::get('/study/{deck:id}', function (Deck $deck) {
         return redirect()->route('decks.study', ['deck' => $deck->id]);
-    })->name('study.panel');
+    })->whereNumber('deck')->name('study.panel');
 
-    // Profile
+    /* Profile */
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
     Route::get('/settings', fn () => redirect()->route('profile.edit'))->name('settings');
 
-    // Decks
+    /* ===== Decks ===== */
     Route::get('/decks', DeckIndex::class)->name('decks.index');
-    Route::get('/decks/create', DeckForm::class)->name('decks.create');
-    Route::get('/decks/{deck:id}', DeckShow::class)->name('decks.show');
-    Route::get('/decks/{deck:id}/edit', DeckForm::class)->name('decks.edit');
 
-    // Study
-    Route::get('/decks/{deck:id}/study', StudyPanel::class)->name('decks.study');
+    // ✅ NEW phải đặt trước mọi route có {deck}
+    Route::get('/decks/{deck:id}/edit', DeckForm::class)->whereNumber('deck')->name('decks.edit');
+    Route::get('/decks/create', DeckCreateForm::class)->name('decks.create');
 
-    // Analytics
-    Route::get('/decks/{deck:id}/analytics', DeckAnalytics::class)->name('decks.analytics');
+    Route::get('/decks/{deck:id}', DeckShow::class)
+        ->whereNumber('deck')->name('decks.show');
+
+    Route::get('/decks/{deck:id}/edit', DeckForm::class)
+        ->whereNumber('deck')->name('decks.edit');
+
+    /* Study 1 deck */
+    Route::get('/decks/{deck:id}/study', StudyPanel::class)
+        ->whereNumber('deck')->name('decks.study');
+
+    /* Analytics */
+    Route::get('/decks/{deck:id}/analytics', DeckAnalytics::class)
+        ->whereNumber('deck')->name('decks.analytics');
     Route::get('/analytics/decks', DecksOverview::class)->name('analytics.decks');
     Route::get('/analytics', DecksOverview::class)->name('analytics.index');
 
-    // Flashcards (Form)
+    /* Flashcards (Form) */
     Route::get('/decks/{deckId}/flashcards/create', FlashcardForm::class)
         ->whereNumber('deckId')->name('flashcards.create');
     Route::get('/decks/{deckId}/flashcards/{itemId}/edit', FlashcardForm::class)
         ->whereNumber('deckId')->whereNumber('itemId')->name('flashcards.edit');
 
-    // MCQ (home + theo deck + global + history)
+    /* MCQ */
     Route::get('/mcq', McqHome::class)->name('mcq.home');
-    Route::get('/decks/{deck}/mcq', McqPanel::class)->name('decks.mcq');
+    Route::get('/decks/{deck}/mcq', McqPanel::class)->whereNumber('deck')->name('decks.mcq');
     Route::get('/mcq/all', McqAllPanel::class)->name('mcq.all');
     Route::get('/mcq/history', McqHistory::class)->name('mcq.history');
 });
 
-// Debug testcase page
+/* Debug testcase page */
 Route::get('/debug/tests', function () {
     $tests = [
         'AuthController' => [
@@ -122,6 +148,7 @@ Route::get('/debug/tests', function () {
     return view('debug.testcases', compact('tests'));
 });
 
+/* Debug coverage */
 Route::get('/debug/coverage', function () {
     abort_unless(app()->isLocal(), 403);
     $path = public_path('coverage/index.html');
@@ -129,5 +156,5 @@ Route::get('/debug/coverage', function () {
     return redirect('/coverage/index.html');
 });
 
-// Breeze auth routes
+/* Breeze auth routes */
 require __DIR__ . '/auth.php';

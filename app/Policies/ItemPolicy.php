@@ -28,4 +28,8 @@ class ItemPolicy
     {
         return $deck->user_id === $user->id;
     }
+    public function viewAny(User $user): bool
+    {
+        return $user !== null; // hoặc return true;
+    }
 }

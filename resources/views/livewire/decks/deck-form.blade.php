@@ -1,65 +1,49 @@
-<div class="space-y-6">
-    {{-- Header --}}
+<div class="max-w-2xl mx-auto space-y-6 py-8">
+
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">
-            {{ $isEdit ? 'Edit Deck' : 'Create Deck' }}
+        <h1 class="text-2xl font-semibold">
+            {{ $isEdit ? 'Edit deck' : 'Create deck' }}
         </h1>
 
-        @if ($isEdit && $deck)
-            <div class="flex items-center gap-2">
-                @if ($deck->is_public)
-                    {{-- Share link khi public --}}
-                    <a href="{{ route('explore.show', $deck->slug) }}"
-                       target="_blank"
-                       class="btn-outline"
-                       title="Open public link">
-                        Public link
-                    </a>
-                @else
-                    <span class="text-sm text-slate-500">Private</span>
-                @endif
-            </div>
-        @endif
+        <a href="{{ route('decks.index') }}" class="y-btn">Back</a>
     </div>
 
-    {{-- Form card --}}
-    <div class="p-6 space-y-5 card">
-        <div>
-            <label class="block mb-1 text-sm font-medium">Name <span class="text-red-500">*</span></label>
-            <input type="text" wire:model.defer="name" class="w-full px-3 py-2 border rounded-lg" placeholder="Deck name...">
-            @error('name') <div class="mt-1 text-sm text-red-500">{{ $message }}</div> @enderror
-        </div>
-
-        <div>
-            <label class="block mb-1 text-sm font-medium">Description</label>
-            <textarea wire:model.defer="description" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="Short description (optional)"></textarea>
-            @error('description') <div class="mt-1 text-sm text-red-500">{{ $message }}</div> @enderror
-        </div>
-
-        <div class="flex items-center gap-3">
-            <label class="inline-flex items-center gap-2">
-                <input type="checkbox" wire:model.defer="is_public" class="rounded">
-                <span>Public (show in Explore)</span>
-            </label>
-
-            @if ($isEdit && $deck && $is_public && $deck->slug)
-                <div class="text-sm text-slate-500">
-                    Share: <a class="text-sky-600 hover:underline" target="_blank" href="{{ route('explore.show', $deck->slug) }}">{{ route('explore.show', $deck->slug) }}</a>
-                </div>
-            @endif
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button wire:click="save" class="btn">
-                {{ $isEdit ? 'Save changes' : 'Create deck' }}
-            </button>
-            <a href="{{ $isEdit && $deck ? route('decks.show', $deck) : route('decks.index') }}" class="btn-outline">
-                Cancel
-            </a>
-        </div>
-    </div>
-
+    {{-- Flash message --}}
     @if (session('status'))
-        <div class="text-emerald-600">{{ session('status') }}</div>
+        <div class="p-3 rounded-md border border-emerald-300 bg-emerald-50 text-emerald-700">
+            {{ session('status') }}
+        </div>
     @endif
+
+    <div class="y-card y-card-pad">
+        <form wire:submit.prevent="save" class="space-y-5">
+
+            <div>
+                <label class="y-label">Name</label>
+                <input type="text" class="y-input" wire:model.defer="name" placeholder="My new deck">
+                @error('name') <div class="text-rose-600 text-sm mt-1">{{ $message }}</div> @enderror
+            </div>
+
+            <div>
+                <label class="y-label">Description</label>
+                <textarea class="y-input" rows="4" wire:model.defer="description"
+                          placeholder="Optional description..."></textarea>
+                @error('description') <div class="text-rose-600 text-sm mt-1">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="flex items-center gap-3">
+                <input id="public" type="checkbox" class="rounded" wire:model.defer="is_public">
+                <label for="public" class="text-sm text-slate-600">Public deck</label>
+                @error('is_public') <div class="text-rose-600 text-sm">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+                <button class="y-btn y-btn--brand">
+                    {{ $isEdit ? 'Save changes' : 'Create deck' }}
+                </button>
+                <a href="{{ $isEdit ? route('decks.show', $deck->id) : route('decks.index') }}"
+                   class="y-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>

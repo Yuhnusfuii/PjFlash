@@ -1,67 +1,101 @@
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">MCQ – Kiểm tra</h1>
-        <div class="text-sm text-slate-500">Chọn deck hoặc làm bài “All decks”</div>
-    </div>
+{{-- resources/views/livewire/study/mcq-home.blade.php --}}
+<div class="max-w-6xl mx-auto space-y-6">
 
-    <div class="card p-4 flex flex-col md:flex-row md:items-end gap-3">
-        <div class="flex-1">
-            <label class="text-sm text-slate-500">Tìm deck</label>
-            <input type="text" wire:model.live="q" class="w-full border rounded-lg px-3 py-2" placeholder="Nhập từ khóa...">
-        </div>
-
-        <div>
-            <label class="text-sm text-slate-500">Chế độ</label>
-            <select wire:model="mode" class="border rounded-lg px-3 py-2">
-                <option value="mixed">Mixed</option>
-                <option value="front_to_back">Front → Back</option>
-                <option value="back_to_front">Back → Front</option>
-            </select>
-        </div>
-
-        <div>
-            <label class="text-sm text-slate-500">Số câu</label>
-            <input type="number" min="5" max="50" step="1" wire:model="num" class="w-28 border rounded-lg px-3 py-2">
-        </div>
-
-        {{-- Global MCQ (All decks) --}}
-        <a href="{{ route('mcq.all', ['mode' => $mode, 'n' => $num]) }}" class="btn">
-            Global quiz (All decks)
-        </a>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-4">
-        @forelse ($decks as $deck)
-            <div class="card p-4 space-y-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="font-semibold">{{ $deck->name }}</div>
-                        <div class="text-sm text-slate-500">{{ $deck->items_count }} items</div>
-                    </div>
-                    <input type="radio" wire:model="deckId" value="{{ $deck->id }}">
-                </div>
-
-                {{-- Thông báo nếu deck quá ít item --}}
-                @if ($deck->items_count < 4)
-                    <div class="text-sm text-red-500 font-medium">
-                        ⚠️ Need at least 4 cards to generate MCQ.
-                    </div>
-                    <button class="btn w-full opacity-50 cursor-not-allowed" disabled>
-                        Start quiz
-                    </button>
-                @else
-                    <button
-                        class="btn w-full"
-                        wire:click="startDeck({{ $deck->id }})"
-                    >Start quiz</button>
-                @endif
-            </div>
-        @empty
-            <div class="text-slate-500">Bạn chưa có deck nào.</div>
-        @endforelse
-    </div>
-
+  {{-- Header --}}
+  <div class="flex items-center justify-between gap-3">
     <div>
-        {{ $decks->links() }}
+      <h1 class="text-2xl font-semibold">MCQ – Kiểm tra</h1>
+      <p class="mt-1 text-slate-500 dark:text-slate-400">
+        Chọn deck, chế độ &amp; số câu, hoặc làm bài với <strong>tất cả deck</strong>.
+      </p>
     </div>
+  </div>
+
+  {{-- Controls --}}
+  <div class="y-card y-card-pad">
+    <div class="grid gap-3 md:grid-cols-3 md:items-end">
+      {{-- Search --}}
+      <div class="md:col-span-1">
+        <label class="y-label mb-1">Tìm deck</label>
+        <input type="text" wire:model.live="q" class="y-input" placeholder="Nhập từ khóa…">
+      </div>
+
+      {{-- Mode --}}
+      <div>
+        <label class="y-label mb-1">Chế độ</label>
+        <select wire:model="mode" class="y-select">
+          <option value="mixed">Mixed</option>
+          <option value="front_to_back">Front → Back</option>
+          <option value="back_to_front">Back → Front</option>
+        </select>
+      </div>
+
+      {{-- Count + Global --}}
+      <div class="flex items-end gap-2">
+        <div class="flex-1">
+          <label class="y-label mb-1">Số câu</label>
+          <input type="number" min="5" max="50" step="1" wire:model="num" class="y-input">
+        </div>
+
+        {{-- 🔥 Nút Global quiz --}}
+        <button type="button" class="y-btn y-btn--brand" wire:click="startGlobal">
+          Global quiz
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {{-- Deck list --}}
+  @if($decks->isEmpty())
+    <div class="y-card y-card-pad text-slate-500 dark:text-slate-400">
+      Không tìm thấy deck nào.
+    </div>
+  @else
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @foreach ($decks as $deck)
+        @php
+          $itemsCount = (int) ($deck->items_count ?? 0);
+          $enough = $itemsCount >= 4;
+        @endphp
+
+        <div class="y-card y-card-pad">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="font-semibold">{{ $deck->name }}</h3>
+              <div class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{{ $itemsCount }} items</div>
+            </div>
+
+            {{-- radio chọn deck (giữ tương thích) --}}
+            <label class="inline-flex items-center gap-2">
+              <input type="radio"
+                     name="deck_pick"
+                     wire:model="deckId"
+                     value="{{ $deck->id }}"
+                     class="h-4 w-4">
+            </label>
+          </div>
+
+          @unless($enough)
+            <div class="mt-3 text-xs text-rose-600 dark:text-rose-400">
+              ⚠️ Need at least 4 cards to generate MCQ.
+            </div>
+          @endunless
+
+          <div class="mt-4">
+            {{-- Start 1 deck: gọi thẳng method Livewire (không Alpine JS) --}}
+            <button
+              type="button"
+              class="y-btn {{ $enough ? 'y-btn--brand' : '' }} w-full justify-center {{ $enough ? '' : 'cursor-not-allowed opacity-60' }}"
+              @if($enough) wire:click="startDeck({{ $deck->id }})" @else disabled @endif>
+              Start quiz
+            </button>
+          </div>
+        </div>
+      @endforeach
+    </div>
+
+    @if(method_exists($decks, 'links'))
+      <div class="mt-4">{{ $decks->links() }}</div>
+    @endif
+  @endif
 </div>
