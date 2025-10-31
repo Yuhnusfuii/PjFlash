@@ -34,10 +34,12 @@ class StudyAllPanel extends Component
 
     public bool $sessionEnded = false;
 
+    /** Queue tạm chứa item_id */
+    public array $queue = [];
+
     public function mount(): void
     {
-        // chỉ user đăng nhập
-        $this->authorize('viewAny', Item::class); // hoặc bỏ nếu policy chưa define
+        $this->queue = [];
         $this->refreshCounts();
         $this->loadNextItem();
     }
@@ -59,6 +61,7 @@ class StudyAllPanel extends Component
         $allowed = ['due','mix','new'];
         $this->queueMode = in_array($mode, $allowed, true) ? $mode : 'mix';
         $this->showAnswer = false;
+        $this->queue = [];
         $this->loadNextItem();
     }
 
@@ -77,9 +80,9 @@ class StudyAllPanel extends Component
         app(SrsService::class)->review($user, $this->current, $rr, $durationMs);
 
         $this->reviewsThisSession++;
-        if (!$this->current->reviewStates()->where('user_id', $user->id)->exists()) {
-            // an toàn: nếu là NEW trong lượt này (đã init trước đó)
-            $this->newThisSession++;
+
+        if ($rr === ReviewRating::AGAIN) {
+            array_splice($this->queue, 2, 0, [$this->current->id]);
         }
 
         $this->showAnswer = false;
@@ -90,12 +93,6 @@ class StudyAllPanel extends Component
             return;
         }
 
-        $this->loadNextItem();
-    }
-
-    public function nextCard(): void
-    {
-        $this->showAnswer = false;
         $this->loadNextItem();
     }
 
@@ -116,8 +113,23 @@ class StudyAllPanel extends Component
             ->count();
     }
 
+    protected function takeFromQueueIfAny(): bool
+    {
+        while (!empty($this->queue)) {
+            $id = array_shift($this->queue);
+            $item = Item::find($id);
+            if ($item) {
+                $this->current = $item;
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected function loadNextItem(): void
     {
+        if ($this->takeFromQueueIfAny()) return;
+
         $this->current = null;
         $this->sessionEnded = false;
 

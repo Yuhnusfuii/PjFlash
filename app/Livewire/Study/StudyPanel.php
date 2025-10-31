@@ -7,7 +7,6 @@ use Livewire\Attributes\Layout;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use App\Models\{Deck, Item, ReviewState};
 use App\Services\SrsService;
 use App\Enums\ReviewRating;
@@ -20,30 +19,42 @@ class StudyPanel extends Component
     public Deck $deck;
     public ?Item $current = null;
 
+    // UI
     public string $mode = 'flashcard';
     public bool $showAnswer = false;
 
+    // Queue: due | mix | new
     public string $queueMode = 'mix';
+
+    // Session counters
     public int $reviewsThisSession = 0;
-    public int $newThisSession = 0;
+    public int $newThisSession     = 0;
     public int $maxReviewsPerSession = 100;
-    public int $maxNewPerSession = 20;
+    public int $maxNewPerSession     = 20;
 
     public array $presets = [10, 50, 100];
+
+    // Flags
     protected bool $currentWasNew = false;
 
+    // Dashboard-ish
     public int $dueRemaining = 0;
     public int $newRemaining = 0;
+
     public bool $sessionEnded = false;
 
-    /** Queue tạm trong session học */
-    protected Collection $queue;
+    /**
+     * Hàng đợi tạm cho nút "Again" (mảng các item_id).
+     * Dùng public + array để Livewire rehydrate an toàn.
+     * @var int[]
+     */
+    public array $queue = [];
 
     public function mount(Deck $deck): void
     {
         $this->authorize('view', $deck);
         $this->deck = $deck;
-        $this->queue = collect();
+        $this->queue = []; // bảo đảm đã init
         $this->refreshCounts();
         $this->loadNextItem();
     }
@@ -53,7 +64,7 @@ class StudyPanel extends Component
         return view('livewire.study.study-panel');
     }
 
-    // --- UI actions ---
+    // ===== UI actions =====
     public function setPreset(int $n): void
     {
         if (!in_array($n, $this->presets, true)) return;
@@ -61,15 +72,25 @@ class StudyPanel extends Component
         $this->maxNewPerSession = min($this->maxNewPerSession, $n);
     }
 
+    public function setMode(string $mode): void
+    {
+        $allowed = ['auto', 'flashcard'];
+        $this->mode = in_array($mode, $allowed, true) ? $mode : 'flashcard';
+        $this->showAnswer = false;
+    }
+
     public function setQueueMode(string $mode): void
     {
-        $allowed = ['due', 'mix', 'new'];
+        $allowed = ['due','mix','new'];
         $this->queueMode = in_array($mode, $allowed, true) ? $mode : 'mix';
         $this->showAnswer = false;
-        $this->queue = collect(); // reset queue khi đổi mode
+
+        // reset queue tạm khi đổi mode
+        $this->queue = [];
         $this->loadNextItem();
     }
 
+    /** Chấm điểm SRS */
     public function grade(int $rating, int $durationMs = 0): void
     {
         if (!$this->current) return;
@@ -88,21 +109,30 @@ class StudyPanel extends Component
         $this->reviewsThisSession++;
         if ($this->currentWasNew) $this->newThisSession++;
 
-        // Nếu “Again” → thêm lại queue
+        // If AGAIN → đưa card quay lại hàng đợi (sau 2 thẻ nữa giống Anki)
         if ($rr === ReviewRating::AGAIN) {
-            // có thể thay 0 => 2 để delay 2 thẻ
-            $this->queue->splice(2, 0, [$this->current]);
+            $id = $this->current->id;
+            // chèn vào vị trí index 2 (sau 2 thẻ nữa)
+            array_splice($this->queue, 2, 0, [$id]);
         }
 
         $this->showAnswer = false;
         $this->refreshCounts();
 
-        if ($this->reviewsThisSession >= $this->maxReviewsPerSession && $this->dueRemaining === 0) {
+        // Dừng khi đạt trần & không còn due
+        if ($this->queueMode !== 'due' &&
+            $this->reviewsThisSession >= $this->maxReviewsPerSession &&
+            $this->dueRemaining === 0) {
             $this->sessionEnded = true;
             return;
         }
 
         $this->loadNextItem();
+    }
+
+    public function refreshCurrent(): void
+    {
+        if ($this->current) $this->current->refresh();
     }
 
     public function nextCard(): void
@@ -111,15 +141,33 @@ class StudyPanel extends Component
         $this->loadNextItem();
     }
 
+    // ===== Helpers =====
+    protected function takeFromQueueIfAny(): bool
+    {
+        // bật while để bỏ qua ID không còn hợp lệ
+        while (!empty($this->queue)) {
+            $id = array_shift($this->queue);
+            $item = Item::find($id);
+            if ($item && $item->deck_id === $this->deck->id) {
+                $this->current = $item;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ===== Queue logic =====
     protected function refreshCounts(): void
     {
         $userId = Auth::id();
-        $now = Carbon::now();
+        $now    = Carbon::now();
 
         $this->dueRemaining = ReviewState::query()
             ->where('user_id', $userId)
             ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-            ->where(fn($q) => $q->whereNull('due_at')->orWhere('due_at', '<=', $now))
+            ->where(function ($q) use ($now) {
+                $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
+            })
             ->count();
 
         $this->newRemaining = Item::query()
@@ -130,9 +178,8 @@ class StudyPanel extends Component
 
     protected function loadNextItem(): void
     {
-        // Ưu tiên lấy từ queue tạm (thẻ “Again”)
-        if ($this->queue->isNotEmpty()) {
-            $this->current = $this->queue->shift();
+        // Ưu tiên thẻ nằm trong queue tạm (Again)
+        if ($this->takeFromQueueIfAny()) {
             return;
         }
 
@@ -141,7 +188,7 @@ class StudyPanel extends Component
         $this->sessionEnded = false;
 
         $userId = Auth::id();
-        $now = Carbon::now();
+        $now    = Carbon::now();
 
         if ($this->queueMode !== 'due' &&
             $this->reviewsThisSession >= $this->maxReviewsPerSession &&
@@ -150,23 +197,35 @@ class StudyPanel extends Component
             return;
         }
 
-        $pickDue = fn() => ReviewState::query()
-            ->where('user_id', $userId)
-            ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-            ->where(fn($q) => $q->whereNull('due_at')->orWhere('due_at', '<=', $now))
-            ->orderBy('due_at', 'asc')->with('item')->first()?->item;
+        $pickDue = function () use ($userId, $now) {
+            return ReviewState::query()
+                ->where('user_id', $userId)
+                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
+                })
+                ->orderBy('due_at', 'asc')
+                ->with('item')
+                ->first()?->item;
+        };
 
-        $pickNew = fn() => Item::query()
-            ->where('deck_id', $this->deck->id)
-            ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
-            ->orderBy('id')->first();
+        $pickNew = function () use ($userId) {
+            return Item::query()
+                ->where('deck_id', $this->deck->id)
+                ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
+                ->orderBy('id')
+                ->first();
+        };
 
-        $pickNextSoon = fn() => ReviewState::query()
-            ->where('user_id', $userId)
-            ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-            ->whereNotNull('due_at')
-            ->orderBy('due_at', 'asc')
-            ->with('item')->first()?->item;
+        $pickNextSoon = function () use ($userId) {
+            return ReviewState::query()
+                ->where('user_id', $userId)
+                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+                ->whereNotNull('due_at')
+                ->orderBy('due_at', 'asc')
+                ->with('item')
+                ->first()?->item;
+        };
 
         switch ($this->queueMode) {
             case 'due':
@@ -174,7 +233,9 @@ class StudyPanel extends Component
                 $this->sessionEnded = true; return;
 
             case 'new':
-                if ($this->newThisSession >= $this->maxNewPerSession) { $this->sessionEnded = true; return; }
+                if ($this->newThisSession >= $this->maxNewPerSession) {
+                    $this->sessionEnded = true; return;
+                }
                 if ($new = $pickNew()) {
                     app(SrsService::class)->init(Auth::user(), $new);
                     $this->current = $new;
@@ -185,6 +246,7 @@ class StudyPanel extends Component
 
             default: // mix
                 if ($due = $pickDue()) { $this->current = $due; return; }
+
                 if ($this->newThisSession < $this->maxNewPerSession) {
                     if ($new = $pickNew()) {
                         app(SrsService::class)->init(Auth::user(), $new);
@@ -193,7 +255,9 @@ class StudyPanel extends Component
                         return;
                     }
                 }
+
                 if ($soon = $pickNextSoon()) { $this->current = $soon; return; }
+
                 $this->sessionEnded = true; return;
         }
     }
