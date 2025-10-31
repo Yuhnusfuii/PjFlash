@@ -7,6 +7,7 @@ use Livewire\Attributes\Layout;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use App\Models\{Deck, Item, ReviewState};
 use App\Services\SrsService;
 use App\Enums\ReviewRating;
@@ -19,36 +20,30 @@ class StudyPanel extends Component
     public Deck $deck;
     public ?Item $current = null;
 
-    // UI state
     public string $mode = 'flashcard';
     public bool $showAnswer = false;
 
-    // Queue mode: 'due' | 'mix' | 'new'
     public string $queueMode = 'mix';
-
-    // Session counters/limits
-    public int $reviewsThisSession   = 0;
-    public int $newThisSession       = 0;
+    public int $reviewsThisSession = 0;
+    public int $newThisSession = 0;
     public int $maxReviewsPerSession = 100;
-    public int $maxNewPerSession     = 20;
+    public int $maxNewPerSession = 20;
 
-    // Quick presets
     public array $presets = [10, 50, 100];
-
-    // Info for current pick
     protected bool $currentWasNew = false;
 
-    // Dashboard-ish numbers
     public int $dueRemaining = 0;
     public int $newRemaining = 0;
-
-    // End state
     public bool $sessionEnded = false;
+
+    /** Queue tạm trong session học */
+    protected Collection $queue;
 
     public function mount(Deck $deck): void
     {
         $this->authorize('view', $deck);
         $this->deck = $deck;
+        $this->queue = collect();
         $this->refreshCounts();
         $this->loadNextItem();
     }
@@ -58,32 +53,23 @@ class StudyPanel extends Component
         return view('livewire.study.study-panel');
     }
 
-    // ===== UI actions =====
+    // --- UI actions ---
     public function setPreset(int $n): void
     {
         if (!in_array($n, $this->presets, true)) return;
         $this->maxReviewsPerSession = $n;
-
-        // tuỳ chọn: đồng bộ new limit theo preset (giữ 20 nếu lớn hơn)
         $this->maxNewPerSession = min($this->maxNewPerSession, $n);
-    }
-
-    public function setMode(string $mode): void
-    {
-        $allowed = ['auto', 'flashcard'];
-        $this->mode = in_array($mode, $allowed, true) ? $mode : 'flashcard';
-        $this->showAnswer = false;
     }
 
     public function setQueueMode(string $mode): void
     {
-        $allowed = ['due','mix','new'];
+        $allowed = ['due', 'mix', 'new'];
         $this->queueMode = in_array($mode, $allowed, true) ? $mode : 'mix';
         $this->showAnswer = false;
+        $this->queue = collect(); // reset queue khi đổi mode
         $this->loadNextItem();
     }
 
-    /** Nhận điểm từ UI và cập nhật SRS (Flashcard) */
     public function grade(int $rating, int $durationMs = 0): void
     {
         if (!$this->current) return;
@@ -99,14 +85,18 @@ class StudyPanel extends Component
 
         app(SrsService::class)->review($user, $this->current, $rr, $durationMs);
 
-        // Session counters
         $this->reviewsThisSession++;
         if ($this->currentWasNew) $this->newThisSession++;
+
+        // Nếu “Again” → thêm lại queue
+        if ($rr === ReviewRating::AGAIN) {
+            // có thể thay 0 => 2 để delay 2 thẻ
+            $this->queue->splice(2, 0, [$this->current]);
+        }
 
         $this->showAnswer = false;
         $this->refreshCounts();
 
-        // Dừng nếu đã đạt trần preset
         if ($this->reviewsThisSession >= $this->maxReviewsPerSession && $this->dueRemaining === 0) {
             $this->sessionEnded = true;
             return;
@@ -115,29 +105,21 @@ class StudyPanel extends Component
         $this->loadNextItem();
     }
 
-    public function refreshCurrent(): void
-    {
-        if ($this->current) $this->current->refresh();
-    }
-
     public function nextCard(): void
     {
         $this->showAnswer = false;
         $this->loadNextItem();
     }
 
-    // ===== Queue logic =====
     protected function refreshCounts(): void
     {
         $userId = Auth::id();
-        $now    = Carbon::now();
+        $now = Carbon::now();
 
         $this->dueRemaining = ReviewState::query()
             ->where('user_id', $userId)
             ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-            ->where(function ($q) use ($now) {
-                $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
-            })
+            ->where(fn($q) => $q->whereNull('due_at')->orWhere('due_at', '<=', $now))
             ->count();
 
         $this->newRemaining = Item::query()
@@ -148,14 +130,19 @@ class StudyPanel extends Component
 
     protected function loadNextItem(): void
     {
+        // Ưu tiên lấy từ queue tạm (thẻ “Again”)
+        if ($this->queue->isNotEmpty()) {
+            $this->current = $this->queue->shift();
+            return;
+        }
+
         $this->current = null;
         $this->currentWasNew = false;
         $this->sessionEnded = false;
 
         $userId = Auth::id();
-        $now    = Carbon::now();
+        $now = Carbon::now();
 
-        // Nếu đã chạm trần review & không còn due ⇒ end
         if ($this->queueMode !== 'due' &&
             $this->reviewsThisSession >= $this->maxReviewsPerSession &&
             $this->dueRemaining === 0) {
@@ -163,78 +150,51 @@ class StudyPanel extends Component
             return;
         }
 
-        // Helpers
-        $pickDue = function () use ($userId, $now) {
-            return ReviewState::query()
-                ->where('user_id', $userId)
-                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-                ->where(function ($q) use ($now) {
-                    $q->whereNull('due_at')->orWhere('due_at', '<=', $now);
-                })
-                ->orderBy('due_at', 'asc')
-                ->with('item')
-                ->first()?->item;
-        };
+        $pickDue = fn() => ReviewState::query()
+            ->where('user_id', $userId)
+            ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+            ->where(fn($q) => $q->whereNull('due_at')->orWhere('due_at', '<=', $now))
+            ->orderBy('due_at', 'asc')->with('item')->first()?->item;
 
-        $pickNew = function () use ($userId) {
-            return Item::query()
-                ->where('deck_id', $this->deck->id)
-                ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
-                ->orderBy('id')
-                ->first();
-        };
+        $pickNew = fn() => Item::query()
+            ->where('deck_id', $this->deck->id)
+            ->whereDoesntHave('reviewStates', fn($q) => $q->where('user_id', $userId))
+            ->orderBy('id')->first();
 
-        $pickNextSoon = function () use ($userId) {
-            return ReviewState::query()
-                ->where('user_id', $userId)
-                ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
-                ->whereNotNull('due_at')
-                ->orderBy('due_at', 'asc')
-                ->with('item')
-                ->first()?->item;
-        };
+        $pickNextSoon = fn() => ReviewState::query()
+            ->where('user_id', $userId)
+            ->whereHas('item', fn($q) => $q->where('deck_id', $this->deck->id))
+            ->whereNotNull('due_at')
+            ->orderBy('due_at', 'asc')
+            ->with('item')->first()?->item;
 
         switch ($this->queueMode) {
             case 'due':
-                $due = $pickDue();
-                if ($due) { $this->current = $due; return; }
-                $this->sessionEnded = true;
-                return;
+                if ($due = $pickDue()) { $this->current = $due; return; }
+                $this->sessionEnded = true; return;
 
             case 'new':
-                if ($this->newThisSession >= $this->maxNewPerSession) {
-                    $this->sessionEnded = true;
-                    return;
-                }
-                $new = $pickNew();
-                if ($new) {
+                if ($this->newThisSession >= $this->maxNewPerSession) { $this->sessionEnded = true; return; }
+                if ($new = $pickNew()) {
                     app(SrsService::class)->init(Auth::user(), $new);
                     $this->current = $new;
                     $this->currentWasNew = true;
                     return;
                 }
-                $this->sessionEnded = true;
-                return;
+                $this->sessionEnded = true; return;
 
             default: // mix
-                $due = $pickDue();
-                if ($due) { $this->current = $due; return; }
-
+                if ($due = $pickDue()) { $this->current = $due; return; }
                 if ($this->newThisSession < $this->maxNewPerSession) {
-                    $new = $pickNew();
-                    if ($new) {
+                    if ($new = $pickNew()) {
                         app(SrsService::class)->init(Auth::user(), $new);
                         $this->current = $new;
                         $this->currentWasNew = true;
                         return;
                     }
                 }
-
-                $soon = $pickNextSoon();
-                if ($soon) { $this->current = $soon; return; }
-
-                $this->sessionEnded = true;
-                return;
+                if ($soon = $pickNextSoon()) { $this->current = $soon; return; }
+                $this->sessionEnded = true; return;
         }
     }
 }

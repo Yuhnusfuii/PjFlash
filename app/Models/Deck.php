@@ -68,7 +68,8 @@ class Deck extends Model
         static::creating(function (Deck $deck) {
             // nếu đã có slug thì giữ nguyên, ngược lại tạo theo name
             if (empty($deck->slug)) {
-                $deck->slug = static::uniqueSlug($deck->name);
+                $deck->slug = static::uniqueSlug($deck->name.'-'.$deck->id);
+                $deck->saveQuietly();
             }
         });
 
@@ -100,5 +101,9 @@ class Deck extends Model
         }
 
         return $slug;
+    }
+        public function getSlugAttribute($value)
+    {
+        return $value ?: Str::slug(($this->name ?? 'deck').'-'.($this->id ?? 'new'));
     }
 }
